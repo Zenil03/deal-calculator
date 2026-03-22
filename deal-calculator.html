@@ -1,250 +1,269 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-
-<title>Real Estate Deal Calculator</title>
-
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<title>Real Estate Deal Analyzer</title>
 <style>
-
-*{
-box-sizing:border-box;
-}
-
-body{
-font-family:Arial, sans-serif;
-background:#f4f6f9;
-margin:0;
-padding:20px;
-}
-
-.container{
-max-width:900px;
-margin:auto;
-background:white;
-padding:30px;
-border-radius:10px;
-box-shadow:0 5px 20px rgba(0,0,0,0.1);
-}
-
-h2{
-text-align:center;
-margin-bottom:25px;
-}
-
-.form-grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:20px;
-}
-
-.field{
-display:flex;
-flex-direction:column;
-}
-
-label{
-font-weight:bold;
-margin-bottom:5px;
-}
-
-input{
-padding:10px;
-border-radius:6px;
-border:1px solid #ccc;
-font-size:16px;
-}
-
-button{
-margin-top:20px;
-padding:14px;
-background:#007bff;
-color:white;
-border:none;
-border-radius:6px;
-font-size:16px;
-cursor:pointer;
-width:100%;
-}
-
-button:hover{
-background:#0056b3;
-}
-
-.result{
-margin-top:30px;
-background:#eef3ff;
-padding:20px;
-border-radius:8px;
-display:none;
-}
-
-.result-grid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:15px;
-}
-
-.result-box{
-background:white;
-padding:15px;
-border-radius:6px;
-box-shadow:0 0 5px rgba(0,0,0,0.05);
-}
-
-.result-box span{
-font-weight:bold;
-font-size:18px;
-}
-
-/* MOBILE */
-
-@media(max-width:700px){
-
-.form-grid{
-grid-template-columns:1fr;
-}
-
-.result-grid{
-grid-template-columns:1fr;
-}
-
-.container{
-padding:20px;
-}
-
-}
-
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f5;color:#1a1a1a}
+.app{display:grid;grid-template-columns:340px 1fr;gap:0;min-height:100vh;max-width:1300px;margin:0 auto;background:#fff;box-shadow:0 0 40px rgba(0,0,0,.08)}
+.sidebar{border-right:1px solid #e8e8e8;overflow-y:auto;background:#fafafa}
+.sidebar-inner{padding:16px}
+.sec-head{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.08em;margin:16px 0 8px;padding-bottom:4px;border-bottom:1px solid #e8e8e8}
+.sec-head:first-child{margin-top:0}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px 8px}
+.fgrid.three{grid-template-columns:1fr 1fr 1fr}
+.field{display:flex;flex-direction:column;gap:2px}
+.field label{font-size:11px;color:#888}
+.field input{font-size:13px;padding:6px 8px;border:1px solid #e0e0e0;border-radius:6px;background:#fff;color:#1a1a1a;outline:none;transition:border-color .15s}
+.field input:focus{border-color:#1a1a1a}
+.run-btn{width:100%;margin-top:14px;padding:11px;font-size:13px;font-weight:600;border-radius:6px;background:#1a1a1a;color:#fff;border:none;cursor:pointer;letter-spacing:.02em;transition:background .15s}
+.run-btn:hover{background:#333}
+.main{overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px;min-height:100vh}
+.empty{display:flex;align-items:center;justify-content:center;height:100%;color:#aaa;font-size:14px}
+.grade-row{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-radius:10px;border:1px solid #e0e0e0}
+.grade-row.Strong{background:#eaf3de;border-color:#97c459}
+.grade-row.Workable{background:#faeeda;border-color:#ef9f27}
+.grade-row.Thin{background:#fcebeb;border-color:#f09595}
+.grade-lbl{font-size:11px;color:#888;margin-bottom:2px}
+.grade-val{font-size:26px;font-weight:700}
+.grade-val.Strong{color:#3b6d11}
+.grade-val.Workable{color:#854f0b}
+.grade-val.Thin{color:#a32d2d}
+.metrics-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.mc{background:#f5f5f5;border-radius:8px;padding:10px 12px}
+.mc-lbl{font-size:11px;color:#888;margin-bottom:3px}
+.mc-val{font-size:20px;font-weight:700}
+.mc-sub{font-size:11px;color:#888;margin-top:1px}
+.good{color:#3b6d11}
+.warn{color:#854f0b}
+.bad{color:#a32d2d}
+.card{border:1px solid #e8e8e8;border-radius:10px;overflow:hidden}
+.card-head{padding:0;background:#fafafa;border-bottom:1px solid #e8e8e8}
+.card-body{padding:14px}
+.tabs{display:flex;gap:0;padding:0 4px}
+.tab{font-size:12px;padding:10px 14px;border:none;background:none;cursor:pointer;color:#888;border-bottom:2px solid transparent;transition:color .15s,border-color .15s}
+.tab.on{color:#1a1a1a;border-bottom-color:#1a1a1a}
+.tab:hover{color:#1a1a1a}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
+.stat{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid #f0f0f0;font-size:13px}
+.stat:last-child{border-bottom:none}
+.stat-n{color:#888}
+.stat-v{font-weight:600}
+tfoot td{font-weight:700;background:#f5f5f5}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{font-size:11px;color:#888;padding:5px 8px;text-align:right;border-bottom:1px solid #e8e8e8;font-weight:500}
+th:first-child{text-align:left}
+td{padding:5px 8px;text-align:right;border-bottom:1px solid #f0f0f0}
+td:first-child{text-align:left;color:#888}
+.amort-wrap{max-height:320px;overflow-y:auto}
+.pos{color:#3b6d11}
+.neg{color:#a32d2d}
+.balloon{color:#a32d2d;font-weight:700}
+.ceil-box{display:flex;flex-direction:column;gap:4px;padding:12px 16px;border-radius:8px;background:#f5f5f5}
+.ceil-lbl{font-size:11px;color:#888}
+.ceil-val{font-size:20px;font-weight:700}
+.ceil-desc{font-size:11px;color:#888}
+.chart-wrap{position:relative;width:100%;height:220px}
+.legend{display:flex;gap:16px;font-size:12px;color:#888;margin-bottom:10px}
+.legend span{display:flex;align-items:center;gap:4px}
+.legend-dot{width:10px;height:10px;border-radius:2px;display:inline-block}
+@media(max-width:768px){.app{grid-template-columns:1fr}.sidebar{border-right:none;border-bottom:1px solid #e8e8e8}.metrics-grid{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr}}
 </style>
-
 </head>
-
 <body>
-
-<div class="container">
-
-<h2>Real Estate Deal Analyzer</h2>
-
-<div class="form-grid">
-
-<div class="field">
-<label>Purchase Price ($)</label>
-<input type="number" id="price">
+<div class="app">
+  <div class="sidebar">
+    <div class="sidebar-inner">
+      <div class="sec-head">Property & income</div>
+      <div class="fgrid">
+        <div class="field"><label>Purchase price</label><input id="purchasePrice" value="2500000"></div>
+        <div class="field"><label>Annual NOI</label><input id="noi" value="185000"></div>
+        <div class="field"><label>Rehab budget</label><input id="rehabBudget" value="0"></div>
+        <div class="field"><label>Closing costs %</label><input id="closingCostsPct" value="2"></div>
+        <div class="field"><label>Reserve %</label><input id="reservePct" value="5"></div>
+      </div>
+      <div class="sec-head">Senior debt</div>
+      <div class="fgrid three">
+        <div class="field"><label>LTV %</label><input id="bankLtv" value="65"></div>
+        <div class="field"><label>Rate %</label><input id="bankRate" value="6.75"></div>
+        <div class="field"><label>Amort yrs</label><input id="bankAmort" value="25"></div>
+        <div class="field"><label>I/O months</label><input id="bankIoMonths" value="0"></div>
+        <div class="field"><label>Balloon mo.</label><input id="bankBalloonMonths" value="0"></div>
+      </div>
+      <div class="sec-head">Seller note / mezz</div>
+      <div class="fgrid three">
+        <div class="field"><label>Amount</label><input id="sellerNoteAmount" value="0"></div>
+        <div class="field"><label>Rate %</label><input id="sellerRate" value="6"></div>
+        <div class="field"><label>Amort yrs</label><input id="sellerAmort" value="10"></div>
+        <div class="field"><label>I/O months</label><input id="sellerIoMonths" value="0"></div>
+        <div class="field"><label>Balloon mo.</label><input id="sellerBalloonMonths" value="0"></div>
+      </div>
+      <div class="sec-head">Hold & exit</div>
+      <div class="fgrid">
+        <div class="field"><label>Hold years</label><input id="holdYears" value="5"></div>
+        <div class="field"><label>NOI growth %</label><input id="noiGrowth" value="3"></div>
+        <div class="field"><label>Exit cap %</label><input id="exitCap" value="7.5"></div>
+        <div class="field"><label>Sale costs %</label><input id="saleCostsPct" value="3"></div>
+      </div>
+      <div class="sec-head">Targets</div>
+      <div class="fgrid">
+        <div class="field"><label>Min DSCR</label><input id="targetDSCR" value="1.25"></div>
+        <div class="field"><label>Min CoC %</label><input id="targetCoC" value="8"></div>
+      </div>
+      <button class="run-btn" onclick="runAnalysis()">Run analysis</button>
+    </div>
+  </div>
+  <div class="main" id="main">
+    <div class="empty">Enter parameters and run analysis</div>
+  </div>
 </div>
 
-<div class="field">
-<label>Annual NOI ($)</label>
-<input type="number" id="noi">
-</div>
-
-<div class="field">
-<label>Bank LTV (%)</label>
-<input type="number" id="ltv" value="70">
-</div>
-
-<div class="field">
-<label>Interest Rate (%)</label>
-<input type="number" id="rate" value="6">
-</div>
-
-<div class="field">
-<label>Amortization Years</label>
-<input type="number" id="amort" value="25">
-</div>
-
-</div>
-
-<button onclick="calculateDeal()">Calculate Deal</button>
-
-<div class="result" id="result">
-
-<h3>Results</h3>
-
-<div class="result-grid">
-
-<div class="result-box">
-Loan Amount<br>
-<span id="loan"></span>
-</div>
-
-<div class="result-box">
-Monthly Payment<br>
-<span id="monthly"></span>
-</div>
-
-<div class="result-box">
-Annual Debt Service<br>
-<span id="annual"></span>
-</div>
-
-<div class="result-box">
-DSCR<br>
-<span id="dscr"></span>
-</div>
-
-<div class="result-box">
-Cap Rate<br>
-<span id="cap"></span>
-</div>
-
-</div>
-
-</div>
-
-</div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
+function nv(v){const x=parseFloat(String(v??"").replace(/,/g,"").trim());return Number.isFinite(x)?x:0}
+function clamp(v,a,b){return Math.min(Math.max(v,a),b)}
+function money(v){return new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0}).format(Number.isFinite(v)?v:0)}
+function pct(v,d=2){return`${(Number.isFinite(v)?v:0).toFixed(d)}%`}
+function mRate(r){return nv(r)/100/12}
+function mPay(p,r,y){p=nv(p);y=nv(y);if(p<=0||y<=0)return 0;const mr=mRate(r),periods=Math.round(y*12);if(periods<=0)return 0;if(mr===0)return p/periods;return(p*mr)/(1-Math.pow(1+mr,-periods))}
+function ioPay(p,r){p=nv(p);if(p<=0)return 0;return p*mRate(r)}
+function remBal({principal,annualRate,amortYears,monthsPaid=0,ioMonths=0,balloonMonths=0}){const p=nv(principal),y=nv(amortYears),paid=Math.max(0,Math.round(nv(monthsPaid))),io=Math.max(0,Math.round(nv(ioMonths))),bal=Math.max(0,Math.round(nv(balloonMonths)));if(p<=0)return 0;if(paid<=0)return p;const em=y>0?Math.round(y*12):0,ap=mPay(p,annualRate,y),mr=mRate(annualRate);let b=p;for(let m=1;m<=paid;m++){if(bal>0&&m>bal)break;const int=b*mr;if(m<=io){}else if(mr===0){b=Math.max(b-(em>0?p/em:0),0)}else{b=Math.max(b-Math.max(ap-int,0),0)}}return Math.max(b,0)}
+function genSched({principal,annualRate,amortYears,ioMonths=0,balloonMonths=0,startMonth=1,maxMonths}){const p=nv(principal),y=nv(amortYears),io=Math.max(0,Math.round(nv(ioMonths))),bal=Math.max(0,Math.round(nv(balloonMonths))),fm=Math.max(1,Math.round(nv(startMonth))),mr=mRate(annualRate);if(p<=0||y<=0)return[];const am=Math.round(y*12);const tot=(()=>{if(nv(maxMonths)>0)return Math.round(nv(maxMonths));if(bal>0)return Math.min(bal,am);return am})();const ap=mPay(p,annualRate,y);let b=p;const s=[];for(let i=0;i<tot;i++){const mo=fm+i,bb=b,int=bb*mr;let pay=0,pp=0,eb=bb;if(mo<=io){pay=ioPay(bb,annualRate);pp=0;eb=bb}else if(mr===0){pay=ap;pp=Math.min(pay,bb);eb=Math.max(bb-pp,0)}else{pay=ap;pp=Math.max(pay-int,0);pp=Math.min(pp,bb);eb=Math.max(bb-pp,0)}const isB=bal>0&&mo===bal;const bpay=isB?eb:0;if(isB){pay+=bpay;pp+=bpay;eb=0}s.push({month:mo,payment:pay,interest:int,principalPaid:pp,balloonPayment:bpay,endingBalance:eb});b=eb;if(b<=0.000001)break}return s}
+function buildDebt({price,bankLtv,bankRate,bankAmort,bankIoMonths,bankBalloonMonths,sellerLoan,sellerRate,sellerAmort,sellerIoMonths,sellerBalloonMonths}){const bl=price*(bankLtv/100);const bs=genSched({principal:bl,annualRate:bankRate,amortYears:bankAmort,ioMonths:bankIoMonths,balloonMonths:bankBalloonMonths,maxMonths:bankBalloonMonths>0?bankBalloonMonths:Math.round(bankAmort*12)});const ss=genSched({principal:sellerLoan,annualRate:sellerRate,amortYears:sellerAmort,ioMonths:sellerIoMonths,balloonMonths:sellerBalloonMonths,maxMonths:sellerBalloonMonths>0?sellerBalloonMonths:Math.round(sellerAmort*12)});const bm=bs[0]?.payment??mPay(bl,bankRate,bankAmort);const sm=ss[0]?.payment??mPay(sellerLoan,sellerRate,sellerAmort);const ads=bs.slice(0,12).reduce((s,r)=>s+r.payment,0)+ss.slice(0,12).reduce((s,r)=>s+r.payment,0);return{bankLoan:bl,sellerLoan,totalDebt:bl+sellerLoan,bankMonthly:bm,sellerMonthly:sm,annualDebtServiceYear1:ads,bankSchedule:bs,sellerSchedule:ss}}
+function calcExit({adjustedNoi,noiGrowth,years,exitCap,saleCostsPct,bankLoan,bankRate,bankAmort,bankIoMonths,bankBalloonMonths,sellerLoan,sellerRate,sellerAmort,sellerIoMonths,sellerBalloonMonths}){const g=noiGrowth/100,tnoi=adjustedNoi*Math.pow(1+g,Math.max(years-1,0));const sp=exitCap>0?tnoi/(exitCap/100):0,nsp=sp*(1-saleCostsPct/100);const mh=years*12;const bb=remBal({principal:bankLoan,annualRate:bankRate,amortYears:bankAmort,monthsPaid:mh,ioMonths:bankIoMonths,balloonMonths:bankBalloonMonths});const sb=remBal({principal:sellerLoan,annualRate:sellerRate,amortYears:sellerAmort,monthsPaid:mh,ioMonths:sellerIoMonths,balloonMonths:sellerBalloonMonths});return{terminalNoi:tnoi,salePrice:sp,netSalePrice:nsp,bankBalance:bb,sellerBalance:sb,netSaleProceeds:nsp-bb-sb}}
+function buildFlows({equityNeeded,adjustedNoi,holdYears,noiGrowth,bankSchedule,sellerSchedule,netSaleProceeds}){const y=Math.max(1,Math.round(holdYears)),g=noiGrowth/100,flows=[-equityNeeded];for(let i=1;i<=y;i++){const yn=adjustedNoi*Math.pow(1+g,i-1);const bd=bankSchedule.slice((i-1)*12,i*12).reduce((s,r)=>s+r.payment,0);const sd=sellerSchedule.slice((i-1)*12,i*12).reduce((s,r)=>s+r.payment,0);let af=yn-bd-sd;if(i===y)af+=netSaleProceeds;flows.push(af)}return flows}
+function npv(rate,cf){let t=0;for(let i=0;i<cf.length;i++)t+=cf[i]/Math.pow(1+rate,i);return t}
+function irrCalc(cf,guess=0.12){if(!Array.isArray(cf)||cf.length<2)return null;let hasN=false,hasP=false;for(const v of cf){if(v<0)hasN=true;if(v>0)hasP=true}if(!hasN||!hasP)return null;let rate=clamp(nv(guess),-0.9,10);for(let i=0;i<50;i++){let val=0,der=0;for(let t=0;t<cf.length;t++){const d=Math.pow(1+rate,t);val+=cf[t]/d;if(t>0)der+=(-t*cf[t])/Math.pow(1+rate,t+1)}if(!Number.isFinite(val)||!Number.isFinite(der)||Math.abs(der)<1e-10)break;const nx=rate-val/der;if(!Number.isFinite(nx)||nx<=-0.9999||nx>100)break;if(Math.abs(nx-rate)<1e-8)return nx*100;rate=nx}let lo=-0.9999,hi=10,lv=npv(lo,cf),hv=npv(hi,cf);if(!Number.isFinite(lv)||!Number.isFinite(hv)||lv*hv>0){const tr=[-0.9,-0.5,-0.25,0,0.05,0.1,0.2,0.35,0.5,1,2,5,10];let found=null;for(let i=0;i<tr.length-1;i++){const a=tr[i],b=tr[i+1],fa=npv(a,cf),fb=npv(b,cf);if(Number.isFinite(fa)&&Number.isFinite(fb)&&fa*fb<=0){found=[a,b];break}}if(!found)return null;[lo,hi]=found;lv=npv(lo,cf);hv=npv(hi,cf)}for(let i=0;i<200;i++){const mid=(lo+hi)/2,mv=npv(mid,cf);if(!Number.isFinite(mv))return null;if(Math.abs(mv)<1e-8)return mid*100;if(lv*mv<=0){hi=mid;hv=mv}else{lo=mid;lv=mv}}return((lo+hi)/2)*100}
+function solveMax({annualNoi,reservePct,closingCostsPct,rehabBudget,bankLtv,bankRate,bankAmort,bankIoMonths,bankBalloonMonths,sellerLoan,sellerRate,sellerAmort,sellerIoMonths,sellerBalloonMonths,targetDSCR,targetCoC}){const rr=reservePct/100,cr=closingCostsPct/100;const test=(price)=>{const aNoi=annualNoi*(1-rr);const d=buildDebt({price,bankLtv,bankRate,bankAmort,bankIoMonths,bankBalloonMonths,sellerLoan,sellerRate,sellerAmort,sellerIoMonths,sellerBalloonMonths});const cc=price*cr,tpc=price+cc+rehabBudget,eq=Math.max(tpc-d.totalDebt,0),ads=d.annualDebtServiceYear1,cf=aNoi-ads,dscr=ads>0?aNoi/ads:Infinity,coc=eq>0?(cf/eq)*100:Infinity;return{ok:dscr>=targetDSCR&&coc>=targetCoC,bankLoan:d.bankLoan,totalDebt:d.totalDebt,equityNeeded:eq,annualDebtService:ads,cashFlow:cf,dscr,coc}};let lo=0,hi=Math.max(annualNoi/0.01,100000);while(test(hi).ok&&hi<1e10)hi*=2;for(let i=0;i<120;i++){const mid=(lo+hi)/2;test(mid).ok?lo=mid:hi=mid}return{maxPrice:lo,...test(lo)}}
+function mergeSched(bs=[],ss=[]){const m=Math.max(bs.length,ss.length),rows=[];for(let i=0;i<m;i++){const b=bs[i]||{},s=ss[i]||{};rows.push({month:i+1,totalPayment:(b.payment||0)+(s.payment||0),totalInterest:(b.interest||0)+(s.interest||0),totalPrincipal:(b.principalPaid||0)+(s.principalPaid||0),totalBalloon:(b.balloonPayment||0)+(s.balloonPayment||0),totalEndingBalance:(b.endingBalance||0)+(s.endingBalance||0)})}return rows}
 
-function monthlyRate(rate){
-return rate/100/12;
+function getForm(){const ids=["purchasePrice","noi","closingCostsPct","reservePct","rehabBudget","bankLtv","bankRate","bankAmort","bankIoMonths","bankBalloonMonths","sellerNoteAmount","sellerRate","sellerAmort","sellerIoMonths","sellerBalloonMonths","holdYears","noiGrowth","exitCap","saleCostsPct","targetDSCR","targetCoC"];const f={};ids.forEach(id=>{f[id]=document.getElementById(id)?.value||"0"});return f}
+
+let activeTab="summary";
+let lastResult=null;
+let chartInst=null;
+
+function runAnalysis(){
+  const form=getForm();
+  const price=nv(form.purchasePrice),aNoi=nv(form.noi),closePct=nv(form.closingCostsPct),resPct=nv(form.reservePct),rehab=nv(form.rehabBudget);
+  const bLtv=nv(form.bankLtv),bRate=nv(form.bankRate),bAmort=nv(form.bankAmort),bIo=nv(form.bankIoMonths),bBal=nv(form.bankBalloonMonths);
+  const sLoan=nv(form.sellerNoteAmount),sRate=nv(form.sellerRate),sAmort=nv(form.sellerAmort),sIo=nv(form.sellerIoMonths),sBal=nv(form.sellerBalloonMonths);
+  const holdYears=Math.max(1,Math.round(nv(form.holdYears))),noiG=nv(form.noiGrowth),exitCap=nv(form.exitCap),saleCostsPct=nv(form.saleCostsPct);
+  const tDSCR=nv(form.targetDSCR),tCoC=nv(form.targetCoC);
+  const resAmt=aNoi*(resPct/100),adjNoi=aNoi-resAmt;
+  const debt=buildDebt({price,bankLtv:bLtv,bankRate:bRate,bankAmort:bAmort,bankIoMonths:bIo,bankBalloonMonths:bBal,sellerLoan:sLoan,sellerRate:sRate,sellerAmort:sAmort,sellerIoMonths:sIo,sellerBalloonMonths:sBal});
+  const ads=debt.annualDebtServiceYear1,cc=price*(closePct/100),tpc=price+cc+rehab,eq=Math.max(tpc-debt.totalDebt,0);
+  const capRate=price>0?(aNoi/price)*100:0,adjCap=price>0?(adjNoi/price)*100:0;
+  const dscr=ads>0?adjNoi/ads:0,dy=debt.totalDebt>0?(adjNoi/debt.totalDebt)*100:0;
+  const ltv=price>0?(debt.totalDebt/price)*100:0,cf=adjNoi-ads,coc=eq>0?(cf/eq)*100:0,ber=adjNoi>0?(ads/adjNoi)*100:0;
+  const exit=calcExit({adjustedNoi:adjNoi,noiGrowth:noiG,years:holdYears,exitCap,saleCostsPct,bankLoan:debt.bankLoan,bankRate:bRate,bankAmort:bAmort,bankIoMonths:bIo,bankBalloonMonths:bBal,sellerLoan:sLoan,sellerRate:sRate,sellerAmort:sAmort,sellerIoMonths:sIo,sellerBalloonMonths:sBal});
+  const flows=buildFlows({equityNeeded:eq,adjustedNoi:adjNoi,holdYears,noiGrowth:noiG,bankSchedule:debt.bankSchedule,sellerSchedule:debt.sellerSchedule,netSaleProceeds:exit.netSaleProceeds});
+  const levIrr=irrCalc(flows);
+  const dscrS=solveMax({annualNoi:aNoi,reservePct:resPct,closingCostsPct:closePct,rehabBudget:rehab,bankLtv:bLtv,bankRate:bRate,bankAmort:bAmort,bankIoMonths:bIo,bankBalloonMonths:bBal,sellerLoan:sLoan,sellerRate:sRate,sellerAmort:sAmort,sellerIoMonths:sIo,sellerBalloonMonths:sBal,targetDSCR:tDSCR,targetCoC:-999999});
+  const cocS=solveMax({annualNoi:aNoi,reservePct:resPct,closingCostsPct:closePct,rehabBudget:rehab,bankLtv:bLtv,bankRate:bRate,bankAmort:bAmort,bankIoMonths:bIo,bankBalloonMonths:bBal,sellerLoan:sLoan,sellerRate:sRate,sellerAmort:sAmort,sellerIoMonths:sIo,sellerBalloonMonths:sBal,targetDSCR:-999999,targetCoC:tCoC});
+  const cmbS=solveMax({annualNoi:aNoi,reservePct:resPct,closingCostsPct:closePct,rehabBudget:rehab,bankLtv:bLtv,bankRate:bRate,bankAmort:bAmort,bankIoMonths:bIo,bankBalloonMonths:bBal,sellerLoan:sLoan,sellerRate:sRate,sellerAmort:sAmort,sellerIoMonths:sIo,sellerBalloonMonths:sBal,targetDSCR:tDSCR,targetCoC:tCoC});
+  let grade="Thin";
+  if(dscr>=1.35&&coc>=10&&ltv<=75&&dy>=9)grade="Strong";
+  else if(dscr>=1.25&&coc>=8&&dy>=8)grade="Workable";
+  const combined=mergeSched(debt.bankSchedule,debt.sellerSchedule);
+  const annualRows=[];
+  const yrs=Math.ceil(combined.length/12);
+  for(let y=0;y<yrs;y++){const sl=combined.slice(y*12,(y+1)*12);const yn=adjNoi*Math.pow(1+noiG/100,y);const d=sl.reduce((s,r)=>s+r.totalPayment,0);annualRows.push({year:y+1,noi:yn,debt:d,cf:yn-d,interest:sl.reduce((s,r)=>s+r.totalInterest,0),principal:sl.reduce((s,r)=>s+r.totalPrincipal,0)})}
+  lastResult={price,aNoi,adjNoi,resAmt,rehab,bankLoan:debt.bankLoan,sellerLoan:debt.sellerLoan,totalDebt:debt.totalDebt,bankMonthly:debt.bankMonthly,sellerMonthly:debt.sellerMonthly,ads,cc,tpc,eq,capRate,adjCap,dscr,dy,ltv,cf,coc,ber,grade,levIrr,exit,combined,annualRows,flows,dscrMax:dscrS.maxPrice,cocMax:cocS.maxPrice,cmbMax:cmbS.maxPrice,tDSCR,tCoC};
+  render();
 }
 
-function monthlyPayment(principal,rate,years){
+function dscrC(v){return v>=1.35?"good":v>=1.2?"warn":"bad"}
+function cocC(v){return v>=10?"good":v>=7?"warn":"bad"}
+function irrC(v){return v!=null?(v>=15?"good":v>=10?"warn":"bad"):""}
+function ltvC(v){return v<=70?"good":v<=80?"warn":"bad"}
 
-let r=monthlyRate(rate);
-let periods=years*12;
-
-if(r==0){
-return principal/periods;
+function render(){
+  const r=lastResult;
+  const main=document.getElementById("main");
+  main.innerHTML=`
+  <div class="grade-row ${r.grade}">
+    <div><div class="grade-lbl">Deal grade</div><div class="grade-val ${r.grade}">${r.grade}</div></div>
+    <div style="text-align:right"><div class="grade-lbl">Ceiling price</div><div style="font-size:20px;font-weight:700">${money(r.cmbMax)}</div><div style="font-size:11px;color:#888">combined target</div></div>
+  </div>
+  <div class="metrics-grid">
+    <div class="mc"><div class="mc-lbl">Cap rate</div><div class="mc-val">${pct(r.capRate)}</div><div class="mc-sub">Adj: ${pct(r.adjCap)}</div></div>
+    <div class="mc"><div class="mc-lbl">DSCR</div><div class="mc-val ${dscrC(r.dscr)}">${r.dscr.toFixed(2)}×</div></div>
+    <div class="mc"><div class="mc-lbl">Cash-on-cash</div><div class="mc-val ${cocC(r.coc)}">${pct(r.coc)}</div></div>
+    <div class="mc"><div class="mc-lbl">Levered IRR</div><div class="mc-val ${irrC(r.levIrr)}">${r.levIrr!=null?pct(r.levIrr):"—"}</div></div>
+    <div class="mc"><div class="mc-lbl">LTV</div><div class="mc-val ${ltvC(r.ltv)}">${pct(r.ltv)}</div></div>
+    <div class="mc"><div class="mc-lbl">Debt yield</div><div class="mc-val">${pct(r.dy)}</div></div>
+    <div class="mc"><div class="mc-lbl">Break-even</div><div class="mc-val">${pct(r.ber)}</div><div class="mc-sub">debt / NOI</div></div>
+    <div class="mc"><div class="mc-lbl">Equity needed</div><div class="mc-val" style="font-size:16px">${money(r.eq)}</div></div>
+  </div>
+  <div class="card">
+    <div class="card-head"><div class="tabs" id="tabRow">
+      <button class="tab${activeTab==="summary"?" on":""}" onclick="setTab('summary')">Summary</button>
+      <button class="tab${activeTab==="cashflows"?" on":""}" onclick="setTab('cashflows')">Cash flows</button>
+      <button class="tab${activeTab==="exit"?" on":""}" onclick="setTab('exit')">Exit</button>
+      <button class="tab${activeTab==="chart"?" on":""}" onclick="setTab('chart')">Chart</button>
+      <button class="tab${activeTab==="amort"?" on":""}" onclick="setTab('amort')">Amort.</button>
+      <button class="tab${activeTab==="ceilings"?" on":""}" onclick="setTab('ceilings')">Max price</button>
+    </div></div>
+    <div class="card-body" id="tabBody">${tabContent()}</div>
+  </div>`;
+  if(activeTab==="chart")buildChart();
 }
 
-return (principal*r)/(1-Math.pow(1+r,-periods));
+function setTab(t){activeTab=t;render()}
+
+function tabContent(){
+  const r=lastResult;
+  if(activeTab==="summary")return`
+    <div class="two-col">
+      <div>
+        ${row("Purchase price",money(r.price))}${row("Annual NOI",money(r.aNoi))}${row("Reserve",money(r.resAmt))}${row("Adjusted NOI",money(r.adjNoi))}${row("Rehab",money(r.rehab))}${row("Closing costs",money(r.cc))}${row("Total project cost",money(r.tpc))}
+      </div><div>
+        ${row("Bank loan",money(r.bankLoan))}${row("Bank monthly pmt",money(r.bankMonthly))}${row("Seller note",money(r.sellerLoan))}${row("Seller monthly pmt",money(r.sellerMonthly))}${row("Total debt",money(r.totalDebt))}${row("Annual debt service",money(r.ads))}${row("Annual cash flow",money(r.cf),r.cf>=0?"pos":"neg")}
+      </div>
+    </div>`;
+  if(activeTab==="cashflows")return`
+    <table>
+      <thead><tr><th>Year</th><th>Adj. NOI</th><th>Debt svc</th><th>Cash flow</th><th>Interest</th><th>Principal</th></tr></thead>
+      <tbody>${r.annualRows.map(ar=>`<tr><td>Yr ${ar.year}</td><td>${money(ar.noi)}</td><td>${money(ar.debt)}</td><td class="${ar.cf>=0?"pos":"neg"}">${money(ar.cf)}</td><td>${money(ar.interest)}</td><td>${money(ar.principal)}</td></tr>`).join("")}</tbody>
+      <tfoot><tr><td>Sale proceeds</td><td colspan="2"></td><td class="${r.exit.netSaleProceeds>=0?"pos":"neg"}">${money(r.exit.netSaleProceeds)}</td><td colspan="2"></td></tr></tfoot>
+    </table>`;
+  if(activeTab==="exit")return`
+    <div class="two-col">
+      <div>${row("Terminal NOI",money(r.exit.terminalNoi))}${row("Sale price",money(r.exit.salePrice))}${row("Sale costs",money(r.exit.salePrice-r.exit.netSalePrice))}${row("Net sale price",money(r.exit.netSalePrice))}</div>
+      <div>${row("Bank payoff",money(r.exit.bankBalance))}${row("Seller payoff",money(r.exit.sellerBalance))}${row("Net proceeds",money(r.exit.netSaleProceeds),r.exit.netSaleProceeds>=0?"pos":"neg")}${row("Equity multiple",r.eq>0?((r.exit.netSaleProceeds+r.eq)/r.eq).toFixed(2)+"×":"—")}</div>
+    </div>`;
+  if(activeTab==="chart")return`
+    <div class="legend">
+      <span><span class="legend-dot" style="background:#378add"></span>Adj. NOI</span>
+      <span><span class="legend-dot" style="background:#b4b2a9"></span>Debt svc</span>
+      <span><span class="legend-dot" style="background:#639922"></span>Cash flow</span>
+    </div>
+    <div class="chart-wrap"><canvas id="cfChart"></canvas></div>`;
+  if(activeTab==="amort")return`<div style="font-size:11px;color:#888;margin-bottom:8px">Combined bank + seller schedule. Balloon payments shown in red.</div><div class="amort-wrap"><table><thead><tr><th>Mo.</th><th>Payment</th><th>Interest</th><th>Principal</th><th>Balloon</th><th>Balance</th></tr></thead><tbody>${r.combined.map(ro=>`<tr><td>${ro.month}</td><td>${money(ro.totalPayment)}</td><td>${money(ro.totalInterest)}</td><td>${money(ro.totalPrincipal)}</td><td class="${ro.totalBalloon>0?"balloon":""}">${ro.totalBalloon>0?money(ro.totalBalloon):"—"}</td><td>${money(ro.totalEndingBalance)}</td></tr>`).join("")}</tbody></table></div>`;
+  if(activeTab==="ceilings")return`
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+      <div class="ceil-box"><div class="ceil-lbl">DSCR only (≥${r.tDSCR}×)</div><div class="ceil-val">${money(r.dscrMax)}</div></div>
+      <div class="ceil-box"><div class="ceil-lbl">CoC only (≥${r.tCoC}%)</div><div class="ceil-val">${money(r.cocMax)}</div></div>
+      <div class="ceil-box" style="border:2px solid #1a1a1a"><div class="ceil-lbl">Combined ceiling</div><div class="ceil-val">${money(r.cmbMax)}</div><div class="ceil-desc">Both constraints</div></div>
+    </div>`;
+  return "";
 }
 
-function money(v){
-return "$"+Math.round(v).toLocaleString();
+function row(n,v,cls=""){return`<div class="stat"><span class="stat-n">${n}</span><span class="stat-v${cls?" "+cls:""}">${v}</span></div>`}
+
+function buildChart(){
+  const r=lastResult;
+  const el=document.getElementById("cfChart");if(!el)return;
+  if(chartInst){chartInst.destroy();chartInst=null}
+  const labels=r.annualRows.map(x=>"Yr "+x.year);
+  const nois=r.annualRows.map(x=>Math.round(x.noi));
+  const debts=r.annualRows.map(x=>Math.round(x.debt));
+  const cfs=r.annualRows.map(x=>Math.round(x.cf));
+  chartInst=new Chart(el,{type:"bar",data:{labels,datasets:[{label:"Adj. NOI",data:nois,backgroundColor:"#378add",borderRadius:4},{label:"Debt svc",data:debts,backgroundColor:"#b4b2a9",borderRadius:4},{label:"Cash flow",data:cfs,type:"line",tension:0.3,fill:false,borderColor:"#639922",backgroundColor:"#639922",pointRadius:5,pointBackgroundColor:"#639922"}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>(v<0?"-":"")+new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",notation:"compact",maximumFractionDigits:0}).format(Math.abs(v))}}}}});
 }
-
-function calculateDeal(){
-
-let price=parseFloat(document.getElementById("price").value)||0;
-let noi=parseFloat(document.getElementById("noi").value)||0;
-let ltv=parseFloat(document.getElementById("ltv").value)||0;
-let rate=parseFloat(document.getElementById("rate").value)||0;
-let amort=parseFloat(document.getElementById("amort").value)||0;
-
-let loan=price*(ltv/100);
-
-let monthly=monthlyPayment(loan,rate,amort);
-
-let annual=monthly*12;
-
-let dscr=annual>0 ? noi/annual : 0;
-
-let cap=price>0 ? (noi/price)*100 : 0;
-
-document.getElementById("loan").innerHTML=money(loan);
-document.getElementById("monthly").innerHTML=money(monthly);
-document.getElementById("annual").innerHTML=money(annual);
-document.getElementById("dscr").innerHTML=dscr.toFixed(2);
-document.getElementById("cap").innerHTML=cap.toFixed(2)+"%";
-
-document.getElementById("result").style.display="block";
-
-}
-
 </script>
-
 </body>
 </html>
