@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Real Estate Deal Calculator</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f4f6f9;
+padding:40px;
+}
+
+.container{
+max-width:700px;
+margin:auto;
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+h2{
+text-align:center;
+}
+
+label{
+font-weight:bold;
+}
+
+input{
+width:100%;
+padding:10px;
+margin-top:5px;
+margin-bottom:15px;
+border-radius:5px;
+border:1px solid #ddd;
+}
+
+button{
+width:100%;
+padding:12px;
+background:#007bff;
+color:white;
+border:none;
+border-radius:5px;
+font-size:16px;
+cursor:pointer;
+}
+
+button:hover{
+background:#0056b3;
+}
+
+.result{
+margin-top:20px;
+background:#eef3ff;
+padding:20px;
+border-radius:8px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Real Estate Deal Analyzer</h2>
+
+<label>Purchase Price ($)</label>
+<input type="number" id="price">
+
+<label>Annual NOI ($)</label>
+<input type="number" id="noi">
+
+<label>Bank LTV (%)</label>
+<input type="number" id="ltv" value="70">
+
+<label>Interest Rate (%)</label>
+<input type="number" id="rate" value="6">
+
+<label>Amortization Years</label>
+<input type="number" id="amort" value="25">
+
+<button onclick="calculateDeal()">Calculate</button>
+
+<div class="result" id="result" style="display:none">
+
+<h3>Results</h3>
+
+<p><b>Loan Amount:</b> <span id="loan"></span></p>
+
+<p><b>Monthly Payment:</b> <span id="monthly"></span></p>
+
+<p><b>Annual Debt Service:</b> <span id="annual"></span></p>
+
+<p><b>DSCR:</b> <span id="dscr"></span></p>
+
+<p><b>Cap Rate:</b> <span id="cap"></span></p>
+
+</div>
+
+</div>
+
+<script>
+
+function monthlyRate(rate){
+return rate/100/12;
+}
+
+function monthlyPayment(principal,rate,years){
+
+let r = monthlyRate(rate);
+let periods = years*12;
+
+if(r==0){
+return principal/periods;
+}
+
+return (principal*r)/(1-Math.pow(1+r,-periods));
+}
+
+function money(v){
+return "$"+Math.round(v).toLocaleString();
+}
+
+function calculateDeal(){
+
+let price=parseFloat(document.getElementById("price").value)||0;
+let noi=parseFloat(document.getElementById("noi").value)||0;
+let ltv=parseFloat(document.getElementById("ltv").value)||0;
+let rate=parseFloat(document.getElementById("rate").value)||0;
+let amort=parseFloat(document.getElementById("amort").value)||0;
+
+let loan=price*(ltv/100);
+
+let monthly=monthlyPayment(loan,rate,amort);
+
+let annual=monthly*12;
+
+let dscr=annual>0 ? noi/annual : 0;
+
+let cap=price>0 ? (noi/price)*100 : 0;
+
+document.getElementById("loan").innerHTML=money(loan);
+document.getElementById("monthly").innerHTML=money(monthly);
+document.getElementById("annual").innerHTML=money(annual);
+document.getElementById("dscr").innerHTML=dscr.toFixed(2);
+document.getElementById("cap").innerHTML=cap.toFixed(2)+"%";
+
+document.getElementById("result").style.display="block";
+
+}
+
+</script>
+
+</body>
+</html>
