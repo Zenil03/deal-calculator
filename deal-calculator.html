@@ -3,266 +3,1746 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Real Estate Deal Analyzer</title>
+<title>Deal Analyzer — Commercial Real Estate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f5;color:#1a1a1a}
-.app{display:grid;grid-template-columns:340px 1fr;gap:0;min-height:100vh;max-width:1300px;margin:0 auto;background:#fff;box-shadow:0 0 40px rgba(0,0,0,.08)}
-.sidebar{border-right:1px solid #e8e8e8;overflow-y:auto;background:#fafafa}
-.sidebar-inner{padding:16px}
-.sec-head{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.08em;margin:16px 0 8px;padding-bottom:4px;border-bottom:1px solid #e8e8e8}
-.sec-head:first-child{margin-top:0}
-.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px 8px}
-.fgrid.three{grid-template-columns:1fr 1fr 1fr}
-.field{display:flex;flex-direction:column;gap:2px}
-.field label{font-size:11px;color:#888}
-.field input{font-size:13px;padding:6px 8px;border:1px solid #e0e0e0;border-radius:6px;background:#fff;color:#1a1a1a;outline:none;transition:border-color .15s}
-.field input:focus{border-color:#1a1a1a}
-.run-btn{width:100%;margin-top:14px;padding:11px;font-size:13px;font-weight:600;border-radius:6px;background:#1a1a1a;color:#fff;border:none;cursor:pointer;letter-spacing:.02em;transition:background .15s}
-.run-btn:hover{background:#333}
-.main{overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px;min-height:100vh}
-.empty{display:flex;align-items:center;justify-content:center;height:100%;color:#aaa;font-size:14px}
-.grade-row{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-radius:10px;border:1px solid #e0e0e0}
-.grade-row.Strong{background:#eaf3de;border-color:#97c459}
-.grade-row.Workable{background:#faeeda;border-color:#ef9f27}
-.grade-row.Thin{background:#fcebeb;border-color:#f09595}
-.grade-lbl{font-size:11px;color:#888;margin-bottom:2px}
-.grade-val{font-size:26px;font-weight:700}
-.grade-val.Strong{color:#3b6d11}
-.grade-val.Workable{color:#854f0b}
-.grade-val.Thin{color:#a32d2d}
-.metrics-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-.mc{background:#f5f5f5;border-radius:8px;padding:10px 12px}
-.mc-lbl{font-size:11px;color:#888;margin-bottom:3px}
-.mc-val{font-size:20px;font-weight:700}
-.mc-sub{font-size:11px;color:#888;margin-top:1px}
-.good{color:#3b6d11}
-.warn{color:#854f0b}
-.bad{color:#a32d2d}
-.card{border:1px solid #e8e8e8;border-radius:10px;overflow:hidden}
-.card-head{padding:0;background:#fafafa;border-bottom:1px solid #e8e8e8}
-.card-body{padding:14px}
-.tabs{display:flex;gap:0;padding:0 4px}
-.tab{font-size:12px;padding:10px 14px;border:none;background:none;cursor:pointer;color:#888;border-bottom:2px solid transparent;transition:color .15s,border-color .15s}
-.tab.on{color:#1a1a1a;border-bottom-color:#1a1a1a}
-.tab:hover{color:#1a1a1a}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
-.stat{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid #f0f0f0;font-size:13px}
+:root{
+  --bg:#0d0d0f;
+  --surface:#141418;
+  --surface2:#1a1a20;
+  --surface3:#22222a;
+  --border:#2a2a35;
+  --border2:#32323e;
+  --accent:#c8f050;
+  --accent2:#5bf0a0;
+  --accent3:#f0c050;
+  --accent-red:#f05060;
+  --accent-blue:#50a0f0;
+  --text:#f0f0f4;
+  --text2:#a0a0b0;
+  --text3:#60606e;
+  --good:#5bf0a0;
+  --warn:#f0c050;
+  --bad:#f05060;
+  --r:8px;
+  --r2:12px;
+}
+
+body{
+  font-family:'Barlow',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  font-size:13px;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ── TOP HEADER PANEL ── */
+.top-panel{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  position:sticky;
+  top:0;
+  z-index:100;
+  border-top:3px solid var(--accent);
+}
+.header-bar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 28px 12px;
+  border-bottom:1px solid var(--border);
+}
+.brand{display:flex;align-items:baseline;gap:12px}
+.brand-title{
+  font-family:'Playfair Display',serif;
+  font-size:28px;
+  font-weight:900;
+  font-style:italic;
+  letter-spacing:-.02em;
+  color:var(--accent);
+  line-height:1;
+}
+.brand-sub{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:10px;
+  color:var(--text3);
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  font-weight:600;
+  margin-top:1px;
+}
+.run-btn{
+  display:flex;align-items:center;gap:8px;
+  padding:10px 24px;
+  background:var(--accent);
+  color:#0d0d0f;
+  border:none;
+  border-radius:var(--r);
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:all .15s;
+}
+.run-btn:hover{background:#d4f560;transform:translateY(-1px);box-shadow:0 4px 20px rgba(200,240,80,.25)}
+.run-btn:active{transform:translateY(0)}
+.run-btn svg{width:14px;height:14px}
+
+/* ── INPUT PANEL ── */
+.inputs-panel{
+  padding:0;
+  display:grid;
+  grid-template-columns: 2fr 2fr 2fr 2fr 1fr;
+  border-top:0;
+}
+.inp-group{
+  padding:14px 20px 16px;
+  border-right:1px solid var(--border);
+  position:relative;
+}
+.inp-group:last-child{border-right:none}
+.inp-group-label{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;
+  font-weight:700;
+  color:var(--accent);
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  margin-bottom:12px;
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+.inp-group-label::after{
+  content:'';flex:1;height:1px;background:var(--border);
+}
+.inp-rows{display:flex;flex-direction:column;gap:7px}
+.inp-row{display:grid;gap:8px}
+.inp-row.cols-1{grid-template-columns:1fr}
+.inp-row.cols-2{grid-template-columns:1fr 1fr}
+.inp-row.cols-3{grid-template-columns:1fr 1fr 1fr}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field label{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:10px;
+  font-weight:600;
+  color:var(--text3);
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.field input{
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+  font-weight:500;
+  padding:7px 10px;
+  border:1px solid var(--border2);
+  border-radius:6px;
+  background:var(--surface2);
+  color:var(--text);
+  outline:none;
+  transition:border-color .15s, box-shadow .15s;
+  width:100%;
+}
+.field input:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(200,240,80,.07);
+}
+.field input:hover:not(:focus){border-color:#3e3e50}
+
+/* ── MAIN OUTPUT AREA ── */
+.main{
+  padding:22px 28px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+/* ── EMPTY STATE ── */
+.empty{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:60vh;gap:16px;color:var(--text3);
+}
+.empty-glyph{font-family:'Playfair Display',serif;font-style:italic;font-size:72px;font-weight:900;color:var(--border2);line-height:1;letter-spacing:-.02em;}
+.empty-text{font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--text3);font-weight:600;}
+
+/* ── GRADE BANNER ── */
+.grade-banner{
+  display:flex;align-items:stretch;
+  border-radius:var(--r2);
+  border:1px solid var(--border2);
+  overflow:hidden;
+}
+.grade-left{
+  flex:1;display:flex;align-items:center;gap:18px;
+  padding:16px 22px;
+}
+.grade-badge{
+  font-family:'Playfair Display',serif;
+  font-size:34px;font-weight:900;font-style:italic;
+  letter-spacing:-.01em;line-height:1;
+  padding:8px 16px;
+  border-radius:6px;
+}
+.grade-meta{display:flex;flex-direction:column;gap:3px}
+.grade-lbl{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:9px;font-weight:700;color:var(--text3);
+  letter-spacing:.2em;text-transform:uppercase;
+}
+.grade-desc{font-size:13px;color:var(--text2);line-height:1.5;font-family:'Barlow',sans-serif;font-weight:400}
+.grade-right{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  border-left:1px solid var(--border);
+  background:var(--surface2);
+}
+.grade-stat{
+  padding:14px 20px;
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;gap:4px;
+}
+.grade-stat:last-child{border-right:none}
+.gs-lbl{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:9px;font-weight:600;color:var(--text3);
+  letter-spacing:.16em;text-transform:uppercase;
+}
+.gs-val{
+  font-family:'Playfair Display',serif;
+  font-size:22px;font-weight:800;font-style:italic;letter-spacing:-.01em;
+}
+
+/* ── METRICS GRID ── */
+.metrics-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.mc{
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:var(--r);
+  padding:12px 14px;
+  position:relative;
+  overflow:hidden;
+}
+.mc::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:var(--bar-color,var(--border2));
+  transition:background .3s;
+}
+.mc-lbl{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:10px;
+  font-weight:600;
+  color:var(--text3);
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  margin-bottom:5px;
+}
+.mc-val{
+  font-family:'Playfair Display',serif;
+  font-size:28px;
+  font-weight:800;
+  font-style:italic;
+  letter-spacing:-.01em;
+  line-height:1;
+}
+.mc-sub{font-size:11px;color:var(--text3);margin-top:4px;line-height:1.4;font-family:'Barlow',sans-serif}
+.mc-bar{height:2px;background:var(--border);border-radius:2px;margin-top:8px;overflow:hidden}
+.mc-bar-fill{height:100%;border-radius:2px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+
+/* ── CARD / TABS ── */
+.card{
+  border:1px solid var(--border2);
+  border-radius:var(--r2);
+  overflow:hidden;
+  background:var(--surface);
+}
+.card-head{
+  background:var(--surface2);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:stretch;
+  overflow-x:auto;
+}
+.tabs{display:flex;flex:1}
+.tab{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;
+  padding:12px 16px;
+  border:none;background:none;
+  color:var(--text3);
+  border-bottom:2px solid transparent;
+  cursor:pointer;
+  transition:all .15s;
+  white-space:nowrap;
+}
+.tab:hover{color:var(--text2)}
+.tab.on{color:var(--accent);border-bottom-color:var(--accent)}
+.tab.inv-tab.on{color:#a78bfa;border-bottom-color:#a78bfa}
+.tab.bank-tab.on{color:var(--accent2);border-bottom-color:var(--accent2)}
+.card-body{padding:20px}
+
+/* ── STAT ROWS ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:0 36px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 24px}
+.stat{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:6px 0;
+  border-bottom:1px solid var(--border);
+}
 .stat:last-child{border-bottom:none}
-.stat-n{color:#888}
-.stat-v{font-weight:600}
-tfoot td{font-weight:700;background:#f5f5f5}
-table{width:100%;border-collapse:collapse;font-size:12px}
-th{font-size:11px;color:#888;padding:5px 8px;text-align:right;border-bottom:1px solid #e8e8e8;font-weight:500}
+.stat-n{color:var(--text3);font-size:12px;font-family:'Barlow',sans-serif;font-weight:400}
+.stat-v{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:12px;color:var(--text)}
+.stat-section-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:10px;font-weight:700;color:var(--text3);
+  text-transform:uppercase;letter-spacing:.18em;
+  margin:14px 0 6px;padding-bottom:5px;
+  border-bottom:1px solid var(--border);
+}
+.stat-section-title:first-child{margin-top:0}
+
+/* ── COLORS ── */
+.good{color:var(--good)!important}
+.warn{color:var(--warn)!important}
+.bad{color:var(--bad)!important}
+.pos{color:var(--good);font-family:'JetBrains Mono',monospace}
+.neg{color:var(--bad);font-family:'JetBrains Mono',monospace}
+.neutral{color:var(--text)}
+
+/* ── TABLES ── */
+table{width:100%;border-collapse:collapse}
+th{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:10px;font-weight:700;color:var(--text3);
+  padding:7px 10px;text-align:right;
+  border-bottom:1px solid var(--border2);
+  letter-spacing:.12em;text-transform:uppercase;
+  background:var(--surface2);
+}
 th:first-child{text-align:left}
-td{padding:5px 8px;text-align:right;border-bottom:1px solid #f0f0f0}
-td:first-child{text-align:left;color:#888}
-.amort-wrap{max-height:320px;overflow-y:auto}
-.pos{color:#3b6d11}
-.neg{color:#a32d2d}
-.balloon{color:#a32d2d;font-weight:700}
-.ceil-box{display:flex;flex-direction:column;gap:4px;padding:12px 16px;border-radius:8px;background:#f5f5f5}
-.ceil-lbl{font-size:11px;color:#888}
-.ceil-val{font-size:20px;font-weight:700}
-.ceil-desc{font-size:11px;color:#888}
-.chart-wrap{position:relative;width:100%;height:220px}
-.legend{display:flex;gap:16px;font-size:12px;color:#888;margin-bottom:10px}
-.legend span{display:flex;align-items:center;gap:4px}
-.legend-dot{width:10px;height:10px;border-radius:2px;display:inline-block}
-@media(max-width:768px){.app{grid-template-columns:1fr}.sidebar{border-right:none;border-bottom:1px solid #e8e8e8}.metrics-grid{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr}}
+td{
+  padding:6px 10px;text-align:right;
+  border-bottom:1px solid var(--border);
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--text2);
+}
+td:first-child{text-align:left;color:var(--text3)}
+tfoot td{
+  font-weight:500;background:var(--surface2);
+  border-top:1px solid var(--border2);color:var(--text);
+}
+tr:hover td{background:rgba(255,255,255,.02)}
+.amort-wrap{max-height:380px;overflow-y:auto;border:1px solid var(--border);border-radius:var(--r)}
+.amort-wrap table th{position:sticky;top:0;z-index:1}
+.balloon{color:var(--bad);font-weight:500}
+
+/* ── CEILING BOXES ── */
+.ceil-boxes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.ceil-box{
+  display:flex;flex-direction:column;gap:6px;
+  padding:16px 18px;border-radius:var(--r);
+  background:var(--surface2);border:1px solid var(--border2);
+}
+.ceil-box.featured{
+  border-color:var(--accent);
+  background:rgba(200,240,80,.04);
+  box-shadow:0 0 24px rgba(200,240,80,.06);
+}
+.ceil-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.18em;text-transform:uppercase}
+.ceil-val{font-family:'Playfair Display',serif;font-size:30px;font-weight:800;font-style:italic;letter-spacing:-.01em;color:var(--text)}
+.ceil-sub{font-size:10px;color:var(--text3);line-height:1.5}
+
+/* ── CHART ── */
+.chart-wrap{position:relative;width:100%;height:260px;margin-top:6px}
+.legend{display:flex;gap:20px;font-size:11px;color:var(--text2);flex-wrap:wrap}
+.legend span{display:flex;align-items:center;gap:6px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600}
+.legend-dot{width:8px;height:8px;border-radius:2px;display:inline-block;flex-shrink:0}
+
+/* ── SUB SECTION ── */
+.sub-head{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:11px;font-weight:700;color:var(--text3);
+  letter-spacing:.2em;text-transform:uppercase;
+  margin:20px 0 10px;padding-bottom:5px;border-bottom:1px solid var(--border);
+}
+.sub-head:first-child{margin-top:0}
+
+/* ── INVESTOR TAB ── */
+.inv-hero{
+  background:var(--surface2);
+  border:1px solid var(--border2);
+  border-radius:var(--r2);
+  padding:18px 24px;
+  margin-bottom:16px;
+  display:grid;grid-template-columns:repeat(5,1fr);gap:16px;
+}
+.inv-kpi{display:flex;flex-direction:column;gap:4px}
+.inv-kpi-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.12em}
+.inv-kpi-val{font-family:'Playfair Display',serif;font-size:26px;font-weight:800;font-style:italic;line-height:1;letter-spacing:-.01em}
+.inv-kpi-sub{font-size:10px;color:var(--text3)}
+.inv-notice{
+  font-size:11px;color:var(--text2);
+  background:rgba(80,160,240,.06);
+  border:1px solid rgba(80,160,240,.2);
+  border-radius:var(--r);
+  padding:12px 16px;margin-bottom:14px;line-height:1.7;
+}
+.inv-notice strong{color:var(--accent-blue)}
+.inv-tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.inv-tier{
+  border-radius:var(--r);border:1px solid var(--border2);
+  overflow:hidden;background:var(--surface2);
+}
+.inv-tier-head{
+  padding:10px 15px;font-family:'Barlow Condensed',sans-serif;
+  font-size:8px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;
+  display:flex;justify-content:space-between;align-items:center;
+  border-bottom:1px solid var(--border);
+}
+.th10{background:rgba(80,160,240,.08);color:var(--accent-blue)}
+.th20{background:rgba(91,240,160,.08);color:var(--good)}
+.th30{background:rgba(167,139,250,.08);color:#a78bfa}
+.thcustom{background:rgba(240,192,80,.08);color:var(--warn)}
+.inv-badge{font-family:'Barlow Condensed',sans-serif;font-size:10px;padding:2px 9px;border-radius:4px;font-weight:700;letter-spacing:.08em}
+.ib10{background:rgba(80,160,240,.15);color:var(--accent-blue)}
+.ib20{background:rgba(91,240,160,.15);color:var(--good)}
+.ib30{background:rgba(167,139,250,.15);color:#a78bfa}
+.ibcustom{background:rgba(240,192,80,.15);color:var(--warn)}
+.min-pill{background:rgba(240,192,80,.2);color:var(--warn);border-radius:3px;padding:1px 5px;font-size:7px;font-weight:500;border:1px solid rgba(240,192,80,.3)}
+.inv-tier-body{padding:13px 15px}
+.inv-tr{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid var(--border)}
+.inv-tr:last-child{border-bottom:none;padding-top:8px;margin-top:4px;border-top:1px solid var(--border2)}
+.inv-tr-lbl{color:var(--text3);font-size:10px}
+.inv-tr-val{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:12px;color:var(--text)}
+.inv-custom-bar{
+  display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:12px 16px;
+  background:rgba(240,192,80,.06);border:1px solid rgba(240,192,80,.2);
+  border-radius:var(--r);flex-wrap:wrap;
+}
+.inv-custom-bar label{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:var(--warn);letter-spacing:.08em}
+.inv-custom-bar input{
+  font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:500;
+  padding:5px 10px;border:1.5px solid rgba(240,192,80,.3);
+  border-radius:6px;background:var(--surface3);color:var(--text);
+  outline:none;width:80px;text-align:right;
+}
+.inv-custom-bar input:focus{border-color:var(--warn)}
+.inv-custom-note{font-size:10px;color:var(--text3);margin-left:auto;font-style:italic}
+.yr-highlight td{background:rgba(91,240,160,.04)!important}
+
+/* ── BANK TAB ── */
+.bank-verdict{
+  border-radius:var(--r2);padding:18px 24px;margin-bottom:16px;
+  display:flex;align-items:center;justify-content:space-between;
+  border:1px solid;gap:20px;
+}
+.bank-verdict.approve{background:rgba(91,240,160,.06);border-color:rgba(91,240,160,.3)}
+.bank-verdict.decline{background:rgba(240,80,96,.06);border-color:rgba(240,80,96,.3)}
+.bank-verdict.conditional{background:rgba(240,192,80,.06);border-color:rgba(240,192,80,.3)}
+.bv-left{flex:1}
+.bv-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.18em;margin-bottom:4px}
+.bv-status{font-family:'Playfair Display',serif;font-size:24px;font-weight:800;font-style:italic;letter-spacing:-.01em;margin-bottom:6px}
+.bv-approve{color:var(--good)}.bv-decline{color:var(--bad)}.bv-conditional{color:var(--warn)}
+.bv-sub{font-size:11px;color:var(--text2);line-height:1.7}
+.bv-right{text-align:right;flex-shrink:0}
+.bv-price-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.18em;margin-bottom:6px}
+.bv-price{font-family:'Playfair Display',serif;font-size:36px;font-weight:900;font-style:italic;letter-spacing:-.02em;line-height:1}
+.bv-price-sub{font-size:10px;color:var(--text3);margin-top:4px}
+.bank-dark{
+  background:var(--surface2);border:1px solid var(--border2);border-radius:var(--r2);
+  padding:20px 24px;margin-bottom:16px;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:28px;
+}
+.bd-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.18em;margin-bottom:5px}
+.bd-val{font-family:'Playfair Display',serif;font-size:26px;font-weight:800;font-style:italic;color:var(--text);letter-spacing:-.01em;line-height:1;margin-bottom:5px}
+.bd-val.featured{color:var(--accent);font-size:34px;font-style:italic}
+.bd-sub{font-size:10px;color:var(--text3);line-height:1.7}
+.bank-crit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.bank-crit{
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:var(--r);padding:14px 16px;
+  border-left:3px solid var(--border2);
+}
+.bank-crit.pass{border-left-color:var(--good)}
+.bank-crit.fail{border-left-color:var(--bad)}
+.bank-crit.caution{border-left-color:var(--warn)}
+.bc-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.14em;margin-bottom:5px}
+.bc-val{font-family:'Playfair Display',serif;font-size:26px;font-weight:800;font-style:italic;letter-spacing:-.01em;margin-bottom:4px}
+.bc-req{font-size:10px;color:var(--text3);display:flex;align-items:center;gap:6px;flex-wrap:wrap;line-height:1.5}
+.pbadge{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;padding:3px 9px;border-radius:4px;letter-spacing:.1em;white-space:nowrap}
+.pbadge.pass{background:rgba(91,240,160,.15);color:var(--good)}
+.pbadge.fail{background:rgba(240,80,96,.15);color:var(--bad)}
+.pbadge.caut{background:rgba(240,192,80,.15);color:var(--warn)}
+.bank-derived{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.bd-box{
+  background:rgba(80,160,240,.05);border:1px solid rgba(80,160,240,.15);
+  border-radius:var(--r);padding:12px 14px;
+}
+.bd-box-lbl{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;color:rgba(80,160,240,.9);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px}
+.bd-box-val{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;font-style:italic;color:var(--text);letter-spacing:-.01em}
+.bd-box-sub{font-size:10px;color:var(--text3);margin-top:2px}
+.bank-summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 32px;margin-bottom:16px}
+.sens-base td{background:rgba(80,160,240,.06)!important;color:var(--accent-blue)}
+.sens-base td:first-child{color:var(--accent-blue)}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--surface)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--text3)}
+
+/* ── MOBILE RUN BTN FIXED ── */
+@media(max-width:680px){
+  .header-bar{
+    flex-wrap:wrap;
+    padding:10px 14px;
+    gap:0;
+  }
+  .brand{flex:1}
+  .run-btn{
+    width:auto;
+    padding:8px 14px;
+    font-size:10px;
+    letter-spacing:.08em;
+    margin-top:0;
+  }
+  .run-btn span.btn-label{display:none}
+}
+
+/* ── TAB SCROLL HINT ── */
+.card-head::after{
+  content:'';
+  position:sticky;
+  right:0;
+  top:0;
+  width:32px;
+  flex-shrink:0;
+  background:linear-gradient(to right,transparent,var(--surface2));
+  pointer-events:none;
+}
+@media(min-width:961px){.card-head::after{display:none}}
+.card-head{-webkit-overflow-scrolling:touch}
+.tabs{-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.amort-wrap{-webkit-overflow-scrolling:touch}
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.table-scroll table{min-width:520px}
+
+/* inputs always show on desktop - only collapsible on mobile */
+@media(min-width:681px){
+  .inp-rows{display:flex!important}
+  .inp-group-label::before{display:none!important}
+}
+
+/* ── RESPONSIVE ── */
+/* ══════════════════════════════════════════
+   RESPONSIVE — full breakpoint cascade
+══════════════════════════════════════════ */
+
+/* ── 1400px: inputs start to tighten ── */
+@media(max-width:1400px){
+  .inputs-panel{grid-template-columns:2fr 2fr 2fr 2fr 1fr}
+  .inp-group{padding:12px 14px 14px}
+}
+
+/* ── 1180px: inputs go 3+2 wrap ── */
+@media(max-width:1180px){
+  .inputs-panel{
+    grid-template-columns:1fr 1fr 1fr;
+  }
+  /* reset all borders then re-apply */
+  .inputs-panel .inp-group{
+    border-right:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+  }
+  .inputs-panel .inp-group:nth-child(3n){border-right:none}
+  .inputs-panel .inp-group:last-child{border-right:none;border-bottom:none}
+  /* kill bottom border on last row */
+  .inputs-panel .inp-group:nth-last-child(-n+3){border-bottom:none}
+
+  /* output grids */
+  .metrics-grid{grid-template-columns:repeat(4,1fr)}
+  .grade-right{grid-template-columns:1fr 1fr 1fr}
+  .two-col{grid-template-columns:1fr 1fr}
+  .inv-hero{grid-template-columns:repeat(3,1fr)}
+  .bank-dark{grid-template-columns:1fr 1fr 1fr}
+  .bank-derived{grid-template-columns:repeat(4,1fr)}
+  .bank-crit-grid{grid-template-columns:1fr 1fr 1fr}
+  .inv-tiers{grid-template-columns:1fr 1fr 1fr}
+  .ceil-boxes{grid-template-columns:1fr 1fr 1fr}
+}
+
+/* ── 960px: 2-col inputs, output adjusts ── */
+@media(max-width:960px){
+  /* header */
+  .brand-sub{display:none}
+
+  /* inputs → 2 col */
+  .inputs-panel{grid-template-columns:1fr 1fr}
+  .inputs-panel .inp-group{
+    border-right:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+  }
+  .inputs-panel .inp-group:nth-child(3n){border-right:1px solid var(--border)}
+  .inputs-panel .inp-group:nth-child(even){border-right:none}
+  .inputs-panel .inp-group:last-child{border-bottom:none}
+  .inputs-panel .inp-group:nth-last-child(2){border-bottom:none}
+
+  /* output */
+  .metrics-grid{grid-template-columns:repeat(2,1fr)}
+  .grade-banner{flex-direction:column}
+  .grade-right{
+    grid-template-columns:1fr 1fr 1fr;
+    border-left:none;
+    border-top:1px solid var(--border);
+    width:100%;
+  }
+  .two-col{grid-template-columns:1fr}
+  .bank-summary-grid{grid-template-columns:1fr}
+  .inv-hero{grid-template-columns:repeat(2,1fr)}
+  .inv-tiers{grid-template-columns:1fr 1fr}
+  .bank-crit-grid{grid-template-columns:1fr 1fr}
+  .bank-dark{grid-template-columns:1fr}
+  .bank-derived{grid-template-columns:repeat(2,1fr)}
+  .ceil-boxes{grid-template-columns:1fr 1fr}
+
+  /* tabs scroll */
+  .card-head{overflow-x:auto}
+  .tabs{min-width:max-content}
+
+  /* main padding */
+  .main{padding:16px}
+}
+
+/* ── 680px: mobile — 1-col inputs, stacked everything ── */
+@media(max-width:680px){
+  /* sticky header becomes compact */
+  .top-panel{position:relative} /* un-sticky on mobile so inputs don't eat screen */
+  .header-bar{padding:12px 16px;gap:8px;flex-wrap:wrap}
+  .run-btn{padding:9px 16px;font-size:10px;width:100%;justify-content:center;margin-top:4px}
+  .brand-title{font-size:18px}
+
+  /* inputs → 1 col */
+  .inputs-panel{grid-template-columns:1fr}
+  .inputs-panel .inp-group{
+    border-right:none;
+    border-bottom:1px solid var(--border);
+  }
+  .inputs-panel .inp-group:last-child{border-bottom:none}
+  /* make 3-col rows 2-col on small screens */
+  .inp-row.cols-3{grid-template-columns:1fr 1fr}
+
+  /* collapsible inputs on mobile */
+  .inp-group{cursor:pointer}
+  .inp-rows{display:none}
+  .inp-group.open .inp-rows{display:flex}
+  .inp-group-label{margin-bottom:0}
+  .inp-group.open .inp-group-label{margin-bottom:12px}
+  .inp-group-label::before{
+    content:'▸';
+    font-size:10px;
+    color:var(--text3);
+    transition:transform .2s;
+    display:inline-block;
+    margin-right:4px;
+  }
+  .inp-group.open .inp-group-label::before{content:'▾'}
+
+  /* output */
+  .metrics-grid{grid-template-columns:1fr 1fr}
+  .mc-val{font-size:18px}
+  .grade-banner{border-radius:var(--r)}
+  .grade-badge{font-size:20px;padding:4px 10px}
+  .grade-right{grid-template-columns:1fr 1fr 1fr}
+  .gs-val{font-size:15px}
+
+  .inv-hero{grid-template-columns:1fr 1fr}
+  .inv-tiers{grid-template-columns:1fr}
+  .inv-tiers.two-up{grid-template-columns:1fr}
+  .bank-crit-grid{grid-template-columns:1fr}
+  .bank-derived{grid-template-columns:1fr 1fr}
+  .ceil-boxes{grid-template-columns:1fr}
+  .bank-verdict{flex-direction:column;gap:12px}
+  .bv-right{text-align:left}
+  .bv-price{font-size:24px}
+
+  /* tables scroll */
+  .card-body{padding:14px 12px;overflow-x:auto}
+  table{min-width:520px}
+  .amort-wrap table{min-width:900px}
+
+  /* charts */
+  .chart-wrap{height:200px}
+}
+
+/* ── 420px: tiny phones ── */
+@media(max-width:480px){
+  .run-btn .btn-label{display:none}
+  .run-btn .btn-short{display:inline!important}
+}
+
+/* ── 420px: tiny phones ── */
+@media(max-width:420px){
+  .metrics-grid{grid-template-columns:1fr 1fr}
+  .grade-right{grid-template-columns:1fr 1fr}
+  .inv-hero{grid-template-columns:1fr 1fr}
+  .bank-derived{grid-template-columns:1fr 1fr}
+  .inp-row.cols-2{grid-template-columns:1fr}
+  .inp-row.cols-3{grid-template-columns:1fr}
+  .mc-val{font-size:16px}
+  .main{padding:10px}
+  .grade-badge{font-size:17px}
+  .gs-val{font-size:13px}
+}
 </style>
 </head>
 <body>
-<div class="app">
-  <div class="sidebar">
-    <div class="sidebar-inner">
-      <div class="sec-head">Property & income</div>
-      <div class="fgrid">
-        <div class="field"><label>Purchase price</label><input id="purchasePrice" value="2500000"></div>
-        <div class="field"><label>Annual NOI</label><input id="noi" value="185000"></div>
-        <div class="field"><label>Rehab budget</label><input id="rehabBudget" value="0"></div>
-        <div class="field"><label>Closing costs %</label><input id="closingCostsPct" value="2"></div>
-        <div class="field"><label>Reserve %</label><input id="reservePct" value="5"></div>
-      </div>
-      <div class="sec-head">Senior debt</div>
-      <div class="fgrid three">
-        <div class="field"><label>LTV %</label><input id="bankLtv" value="65"></div>
-        <div class="field"><label>Rate %</label><input id="bankRate" value="6.75"></div>
-        <div class="field"><label>Amort yrs</label><input id="bankAmort" value="25"></div>
-        <div class="field"><label>I/O months</label><input id="bankIoMonths" value="0"></div>
-        <div class="field"><label>Balloon mo.</label><input id="bankBalloonMonths" value="0"></div>
-      </div>
-      <div class="sec-head">Seller note / mezz</div>
-      <div class="fgrid three">
-        <div class="field"><label>Amount</label><input id="sellerNoteAmount" value="0"></div>
-        <div class="field"><label>Rate %</label><input id="sellerRate" value="6"></div>
-        <div class="field"><label>Amort yrs</label><input id="sellerAmort" value="10"></div>
-        <div class="field"><label>I/O months</label><input id="sellerIoMonths" value="0"></div>
-        <div class="field"><label>Balloon mo.</label><input id="sellerBalloonMonths" value="0"></div>
-      </div>
-      <div class="sec-head">Hold & exit</div>
-      <div class="fgrid">
-        <div class="field"><label>Hold years</label><input id="holdYears" value="5"></div>
-        <div class="field"><label>NOI growth %</label><input id="noiGrowth" value="3"></div>
-        <div class="field"><label>Exit cap %</label><input id="exitCap" value="7.5"></div>
-        <div class="field"><label>Sale costs %</label><input id="saleCostsPct" value="3"></div>
-      </div>
-      <div class="sec-head">Targets</div>
-      <div class="fgrid">
-        <div class="field"><label>Min DSCR</label><input id="targetDSCR" value="1.25"></div>
-        <div class="field"><label>Min CoC %</label><input id="targetCoC" value="8"></div>
-      </div>
-      <button class="run-btn" onclick="runAnalysis()">Run analysis</button>
+
+<!-- ══ TOP PANEL ══ -->
+<div class="top-panel">
+  <div class="header-bar">
+    <div class="brand">
+      <div class="brand-title">Deal Analyzer</div>
+      <div class="brand-sub">Commercial Real Estate</div>
     </div>
+    <button class="run-btn" onclick="runAnalysis()">
+      <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 2L13 8L3 14V2Z" fill="currentColor"/>
+      </svg>
+      <span class="btn-label">Run Analysis</span>
+      <span style="display:none" class="btn-short">Run</span>
+    </button>
   </div>
-  <div class="main" id="main">
-    <div class="empty">Enter parameters and run analysis</div>
+
+  <div class="inputs-panel">
+
+    <!-- Property & Income -->
+    <div class="inp-group">
+      <div class="inp-group-label">Property &amp; Income</div>
+      <div class="inp-rows">
+        <div class="inp-row cols-2">
+          <div class="field"><label>Purchase Price ($)</label><input id="purchasePrice" value="2500000"></div>
+          <div class="field"><label>Annual NOI ($)</label><input id="noi" value="185000"></div>
+        </div>
+        <div class="inp-row cols-2">
+          <div class="field"><label>Rehab Budget ($)</label><input id="rehabBudget" value="0"></div>
+          <div class="field"><label>Closing Costs (%)</label><input id="closingCostsPct" value="2"></div>
+        </div>
+        <div class="inp-row cols-1">
+          <div class="field"><label>Reserve / Vacancy (%)</label><input id="reservePct" value="5"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Senior Debt -->
+    <div class="inp-group">
+      <div class="inp-group-label">Senior Debt — Bank</div>
+      <div class="inp-rows">
+        <div class="inp-row cols-3">
+          <div class="field"><label>LTV (%)</label><input id="bankLtv" value="65"></div>
+          <div class="field"><label>Rate (%)</label><input id="bankRate" value="6.75"></div>
+          <div class="field"><label>Amort (yrs)</label><input id="bankAmort" value="25"></div>
+        </div>
+        <div class="inp-row cols-2">
+          <div class="field"><label>I/O Period (mo)</label><input id="bankIoMonths" value="0"></div>
+          <div class="field"><label>Balloon (mo)</label><input id="bankBalloonMonths" value="0"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Seller Note -->
+    <div class="inp-group">
+      <div class="inp-group-label">Seller Note / Mezz</div>
+      <div class="inp-rows">
+        <div class="inp-row cols-3">
+          <div class="field"><label>Amount ($)</label><input id="sellerNoteAmount" value="0"></div>
+          <div class="field"><label>Rate (%)</label><input id="sellerRate" value="6"></div>
+          <div class="field"><label>Amort (yrs)</label><input id="sellerAmort" value="10"></div>
+        </div>
+        <div class="inp-row cols-2">
+          <div class="field"><label>I/O Period (mo)</label><input id="sellerIoMonths" value="0"></div>
+          <div class="field"><label>Balloon (mo)</label><input id="sellerBalloonMonths" value="0"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hold & Exit -->
+    <div class="inp-group">
+      <div class="inp-group-label">Hold &amp; Exit</div>
+      <div class="inp-rows">
+        <div class="inp-row cols-2">
+          <div class="field"><label>Hold Period (yrs)</label><input id="holdYears" value="5"></div>
+          <div class="field"><label>NOI Growth (%)</label><input id="noiGrowth" value="3"></div>
+        </div>
+        <div class="inp-row cols-2">
+          <div class="field"><label>Exit Cap Rate (%)</label><input id="exitCap" value="7.5"></div>
+          <div class="field"><label>Sale Costs (%)</label><input id="saleCostsPct" value="3"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Deal Targets -->
+    <div class="inp-group">
+      <div class="inp-group-label">Targets</div>
+      <div class="inp-rows">
+        <div class="inp-row cols-1">
+          <div class="field"><label>Min DSCR</label><input id="targetDSCR" value="1.25"></div>
+        </div>
+        <div class="inp-row cols-1">
+          <div class="field"><label>Min CoC (%)</label><input id="targetCoC" value="8"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ OUTPUT AREA ══ -->
+<div class="main" id="main">
+  <div class="empty">
+    <div class="empty-glyph">Analyze.</div>
+    <div class="empty-text">Configure parameters &amp; run analysis</div>
   </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
+/* ════════════════════════════════════════════
+   FINANCE ENGINE
+════════════════════════════════════════════ */
 function nv(v){const x=parseFloat(String(v??"").replace(/,/g,"").trim());return Number.isFinite(x)?x:0}
-function clamp(v,a,b){return Math.min(Math.max(v,a),b)}
 function money(v){return new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0}).format(Number.isFinite(v)?v:0)}
 function pct(v,d=2){return`${(Number.isFinite(v)?v:0).toFixed(d)}%`}
 function mRate(r){return nv(r)/100/12}
-function mPay(p,r,y){p=nv(p);y=nv(y);if(p<=0||y<=0)return 0;const mr=mRate(r),periods=Math.round(y*12);if(periods<=0)return 0;if(mr===0)return p/periods;return(p*mr)/(1-Math.pow(1+mr,-periods))}
+function mPay(p,r,y){p=nv(p);y=nv(y);if(p<=0||y<=0)return 0;const mr=mRate(r),per=Math.round(y*12);if(per<=0)return 0;if(mr===0)return p/per;return(p*mr)/(1-Math.pow(1+mr,-per))}
 function ioPay(p,r){p=nv(p);if(p<=0)return 0;return p*mRate(r)}
-function remBal({principal,annualRate,amortYears,monthsPaid=0,ioMonths=0,balloonMonths=0}){const p=nv(principal),y=nv(amortYears),paid=Math.max(0,Math.round(nv(monthsPaid))),io=Math.max(0,Math.round(nv(ioMonths))),bal=Math.max(0,Math.round(nv(balloonMonths)));if(p<=0)return 0;if(paid<=0)return p;const em=y>0?Math.round(y*12):0,ap=mPay(p,annualRate,y),mr=mRate(annualRate);let b=p;for(let m=1;m<=paid;m++){if(bal>0&&m>bal)break;const int=b*mr;if(m<=io){}else if(mr===0){b=Math.max(b-(em>0?p/em:0),0)}else{b=Math.max(b-Math.max(ap-int,0),0)}}return Math.max(b,0)}
-function genSched({principal,annualRate,amortYears,ioMonths=0,balloonMonths=0,startMonth=1,maxMonths}){const p=nv(principal),y=nv(amortYears),io=Math.max(0,Math.round(nv(ioMonths))),bal=Math.max(0,Math.round(nv(balloonMonths))),fm=Math.max(1,Math.round(nv(startMonth))),mr=mRate(annualRate);if(p<=0||y<=0)return[];const am=Math.round(y*12);const tot=(()=>{if(nv(maxMonths)>0)return Math.round(nv(maxMonths));if(bal>0)return Math.min(bal,am);return am})();const ap=mPay(p,annualRate,y);let b=p;const s=[];for(let i=0;i<tot;i++){const mo=fm+i,bb=b,int=bb*mr;let pay=0,pp=0,eb=bb;if(mo<=io){pay=ioPay(bb,annualRate);pp=0;eb=bb}else if(mr===0){pay=ap;pp=Math.min(pay,bb);eb=Math.max(bb-pp,0)}else{pay=ap;pp=Math.max(pay-int,0);pp=Math.min(pp,bb);eb=Math.max(bb-pp,0)}const isB=bal>0&&mo===bal;const bpay=isB?eb:0;if(isB){pay+=bpay;pp+=bpay;eb=0}s.push({month:mo,payment:pay,interest:int,principalPaid:pp,balloonPayment:bpay,endingBalance:eb});b=eb;if(b<=0.000001)break}return s}
-function buildDebt({price,bankLtv,bankRate,bankAmort,bankIoMonths,bankBalloonMonths,sellerLoan,sellerRate,sellerAmort,sellerIoMonths,sellerBalloonMonths}){const bl=price*(bankLtv/100);const bs=genSched({principal:bl,annualRate:bankRate,amortYears:bankAmort,ioMonths:bankIoMonths,balloonMonths:bankBalloonMonths,maxMonths:bankBalloonMonths>0?bankBalloonMonths:Math.round(bankAmort*12)});const ss=genSched({principal:sellerLoan,annualRate:sellerRate,amortYears:sellerAmort,ioMonths:sellerIoMonths,balloonMonths:sellerBalloonMonths,maxMonths:sellerBalloonMonths>0?sellerBalloonMonths:Math.round(sellerAmort*12)});const bm=bs[0]?.payment??mPay(bl,bankRate,bankAmort);const sm=ss[0]?.payment??mPay(sellerLoan,sellerRate,sellerAmort);const ads=bs.slice(0,12).reduce((s,r)=>s+r.payment,0)+ss.slice(0,12).reduce((s,r)=>s+r.payment,0);return{bankLoan:bl,sellerLoan,totalDebt:bl+sellerLoan,bankMonthly:bm,sellerMonthly:sm,annualDebtServiceYear1:ads,bankSchedule:bs,sellerSchedule:ss}}
-function calcExit({adjustedNoi,noiGrowth,years,exitCap,saleCostsPct,bankLoan,bankRate,bankAmort,bankIoMonths,bankBalloonMonths,sellerLoan,sellerRate,sellerAmort,sellerIoMonths,sellerBalloonMonths}){const g=noiGrowth/100,tnoi=adjustedNoi*Math.pow(1+g,Math.max(years-1,0));const sp=exitCap>0?tnoi/(exitCap/100):0,nsp=sp*(1-saleCostsPct/100);const mh=years*12;const bb=remBal({principal:bankLoan,annualRate:bankRate,amortYears:bankAmort,monthsPaid:mh,ioMonths:bankIoMonths,balloonMonths:bankBalloonMonths});const sb=remBal({principal:sellerLoan,annualRate:sellerRate,amortYears:sellerAmort,monthsPaid:mh,ioMonths:sellerIoMonths,balloonMonths:sellerBalloonMonths});return{terminalNoi:tnoi,salePrice:sp,netSalePrice:nsp,bankBalance:bb,sellerBalance:sb,netSaleProceeds:nsp-bb-sb}}
-function buildFlows({equityNeeded,adjustedNoi,holdYears,noiGrowth,bankSchedule,sellerSchedule,netSaleProceeds}){const y=Math.max(1,Math.round(holdYears)),g=noiGrowth/100,flows=[-equityNeeded];for(let i=1;i<=y;i++){const yn=adjustedNoi*Math.pow(1+g,i-1);const bd=bankSchedule.slice((i-1)*12,i*12).reduce((s,r)=>s+r.payment,0);const sd=sellerSchedule.slice((i-1)*12,i*12).reduce((s,r)=>s+r.payment,0);let af=yn-bd-sd;if(i===y)af+=netSaleProceeds;flows.push(af)}return flows}
-function npv(rate,cf){let t=0;for(let i=0;i<cf.length;i++)t+=cf[i]/Math.pow(1+rate,i);return t}
-function irrCalc(cf,guess=0.12){if(!Array.isArray(cf)||cf.length<2)return null;let hasN=false,hasP=false;for(const v of cf){if(v<0)hasN=true;if(v>0)hasP=true}if(!hasN||!hasP)return null;let rate=clamp(nv(guess),-0.9,10);for(let i=0;i<50;i++){let val=0,der=0;for(let t=0;t<cf.length;t++){const d=Math.pow(1+rate,t);val+=cf[t]/d;if(t>0)der+=(-t*cf[t])/Math.pow(1+rate,t+1)}if(!Number.isFinite(val)||!Number.isFinite(der)||Math.abs(der)<1e-10)break;const nx=rate-val/der;if(!Number.isFinite(nx)||nx<=-0.9999||nx>100)break;if(Math.abs(nx-rate)<1e-8)return nx*100;rate=nx}let lo=-0.9999,hi=10,lv=npv(lo,cf),hv=npv(hi,cf);if(!Number.isFinite(lv)||!Number.isFinite(hv)||lv*hv>0){const tr=[-0.9,-0.5,-0.25,0,0.05,0.1,0.2,0.35,0.5,1,2,5,10];let found=null;for(let i=0;i<tr.length-1;i++){const a=tr[i],b=tr[i+1],fa=npv(a,cf),fb=npv(b,cf);if(Number.isFinite(fa)&&Number.isFinite(fb)&&fa*fb<=0){found=[a,b];break}}if(!found)return null;[lo,hi]=found;lv=npv(lo,cf);hv=npv(hi,cf)}for(let i=0;i<200;i++){const mid=(lo+hi)/2,mv=npv(mid,cf);if(!Number.isFinite(mv))return null;if(Math.abs(mv)<1e-8)return mid*100;if(lv*mv<=0){hi=mid;hv=mv}else{lo=mid;lv=mv}}return((lo+hi)/2)*100}
-function solveMax({annualNoi,reservePct,closingCostsPct,rehabBudget,bankLtv,bankRate,bankAmort,bankIoMonths,bankBalloonMonths,sellerLoan,sellerRate,sellerAmort,sellerIoMonths,sellerBalloonMonths,targetDSCR,targetCoC}){const rr=reservePct/100,cr=closingCostsPct/100;const test=(price)=>{const aNoi=annualNoi*(1-rr);const d=buildDebt({price,bankLtv,bankRate,bankAmort,bankIoMonths,bankBalloonMonths,sellerLoan,sellerRate,sellerAmort,sellerIoMonths,sellerBalloonMonths});const cc=price*cr,tpc=price+cc+rehabBudget,eq=Math.max(tpc-d.totalDebt,0),ads=d.annualDebtServiceYear1,cf=aNoi-ads,dscr=ads>0?aNoi/ads:Infinity,coc=eq>0?(cf/eq)*100:Infinity;return{ok:dscr>=targetDSCR&&coc>=targetCoC,bankLoan:d.bankLoan,totalDebt:d.totalDebt,equityNeeded:eq,annualDebtService:ads,cashFlow:cf,dscr,coc}};let lo=0,hi=Math.max(annualNoi/0.01,100000);while(test(hi).ok&&hi<1e10)hi*=2;for(let i=0;i<120;i++){const mid=(lo+hi)/2;test(mid).ok?lo=mid:hi=mid}return{maxPrice:lo,...test(lo)}}
-function mergeSched(bs=[],ss=[]){const m=Math.max(bs.length,ss.length),rows=[];for(let i=0;i<m;i++){const b=bs[i]||{},s=ss[i]||{};rows.push({month:i+1,totalPayment:(b.payment||0)+(s.payment||0),totalInterest:(b.interest||0)+(s.interest||0),totalPrincipal:(b.principalPaid||0)+(s.principalPaid||0),totalBalloon:(b.balloonPayment||0)+(s.balloonPayment||0),totalEndingBalance:(b.endingBalance||0)+(s.endingBalance||0)})}return rows}
+function remBal({principal,annualRate,amortYears,monthsPaid=0,ioMonths=0,balloonMonths=0}){
+  const p=nv(principal),y=nv(amortYears),paid=Math.max(0,Math.round(nv(monthsPaid)));
+  const io=Math.max(0,Math.round(nv(ioMonths))),bal=Math.max(0,Math.round(nv(balloonMonths)));
+  if(p<=0)return 0;if(paid<=0)return p;
+  const em=y>0?Math.round(y*12):0,ap=mPay(p,annualRate,y),mr=mRate(annualRate);
+  let b=p;
+  for(let m=1;m<=paid;m++){if(bal>0&&m>bal)break;const int=b*mr;if(m<=io){}else if(mr===0){b=Math.max(b-(em>0?p/em:0),0)}else{b=Math.max(b-Math.max(ap-int,0),0)}}
+  return Math.max(b,0)}
+function genSched({principal,annualRate,amortYears,ioMonths=0,balloonMonths=0,startMonth=1,maxMonths}){
+  const p=nv(principal),y=nv(amortYears),io=Math.max(0,Math.round(nv(ioMonths)));
+  const bal=Math.max(0,Math.round(nv(balloonMonths))),fm=Math.max(1,Math.round(nv(startMonth))),mr=mRate(annualRate);
+  if(p<=0||y<=0)return[];
+  const am=Math.round(y*12);
+  const tot=(()=>{if(nv(maxMonths)>0)return Math.round(nv(maxMonths));if(bal>0)return Math.min(bal,am);return am})();
+  const ap=mPay(p,annualRate,y);let b=p;const s=[];
+  for(let i=0;i<tot;i++){
+    const mo=fm+i,bb=b,int=bb*mr;let pay=0,pp=0,eb=bb;
+    if(mo<=io){pay=ioPay(bb,annualRate);pp=0;eb=bb}
+    else if(mr===0){pay=ap;pp=Math.min(pay,bb);eb=Math.max(bb-pp,0)}
+    else{pay=ap;pp=Math.max(pay-int,0);pp=Math.min(pp,bb);eb=Math.max(bb-pp,0)}
+    const isB=bal>0&&mo===bal;const bpay=isB?eb:0;
+    if(isB){pay+=bpay;pp+=bpay;eb=0}
+    s.push({month:mo,payment:pay,interest:int,principalPaid:pp,balloonPayment:bpay,endingBalance:eb});
+    b=eb;if(b<=0.000001)break}
+  return s}
+function buildDebt({price,bankLtv,bankRate,bankAmort,bankIoMonths,bankBalloonMonths,sellerLoan,sellerRate,sellerAmort,sellerIoMonths,sellerBalloonMonths}){
+  const bl=price*(bankLtv/100);
+  const bs=genSched({principal:bl,annualRate:bankRate,amortYears:bankAmort,ioMonths:bankIoMonths,balloonMonths:bankBalloonMonths,maxMonths:bankBalloonMonths>0?bankBalloonMonths:Math.round(bankAmort*12)});
+  const ss=genSched({principal:sellerLoan,annualRate:sellerRate,amortYears:sellerAmort,ioMonths:sellerIoMonths,balloonMonths:sellerBalloonMonths,maxMonths:sellerBalloonMonths>0?sellerBalloonMonths:Math.round(sellerAmort*12)});
+  const bm=bs[0]?.payment??mPay(bl,bankRate,bankAmort);
+  const sm=ss[0]?.payment??mPay(sellerLoan,sellerRate,sellerAmort);
+  const ads=bs.slice(0,12).reduce((s,r)=>s+r.payment,0)+ss.slice(0,12).reduce((s,r)=>s+r.payment,0);
+  return{bankLoan:bl,sellerLoan,totalDebt:bl+sellerLoan,bankMonthly:bm,sellerMonthly:sm,annualDebtServiceYear1:ads,bankSchedule:bs,sellerSchedule:ss}}
+function calcExit({adjustedNoi,noiGrowth,years,exitCap,saleCostsPct,bankLoan,bankRate,bankAmort,bankIoMonths,bankBalloonMonths,sellerLoan,sellerRate,sellerAmort,sellerIoMonths,sellerBalloonMonths}){
+  const g=noiGrowth/100,tnoi=adjustedNoi*Math.pow(1+g,Math.max(years-1,0));
+  const sp=exitCap>0?tnoi/(exitCap/100):0,nsp=sp*(1-saleCostsPct/100);const mh=years*12;
+  const bb=remBal({principal:bankLoan,annualRate:bankRate,amortYears:bankAmort,monthsPaid:mh,ioMonths:bankIoMonths,balloonMonths:bankBalloonMonths});
+  const sb=remBal({principal:sellerLoan,annualRate:sellerRate,amortYears:sellerAmort,monthsPaid:mh,ioMonths:sellerIoMonths,balloonMonths:sellerBalloonMonths});
+  return{terminalNoi:tnoi,salePrice:sp,netSalePrice:nsp,bankBalance:bb,sellerBalance:sb,netSaleProceeds:nsp-bb-sb}}
+function buildFlows({equityNeeded,adjustedNoi,holdYears,noiGrowth,bankSchedule,sellerSchedule,netSaleProceeds}){
+  const y=Math.max(1,Math.round(holdYears)),g=noiGrowth/100,flows=[-equityNeeded];
+  for(let i=1;i<=y;i++){
+    const yn=adjustedNoi*Math.pow(1+g,i-1);
+    const bd=bankSchedule.slice((i-1)*12,i*12).reduce((s,r)=>s+r.payment,0);
+    const sd=sellerSchedule.slice((i-1)*12,i*12).reduce((s,r)=>s+r.payment,0);
+    let af=yn-bd-sd;if(i===y)af+=netSaleProceeds;flows.push(af)}
+  return flows}
+function npvCalc(rate,cf){let t=0;for(let i=0;i<cf.length;i++)t+=cf[i]/Math.pow(1+rate,i);return t}
+function irrCalc(cf){
+  if(!Array.isArray(cf)||cf.length<2)return null;
+  let hasN=false,hasP=false;for(const v of cf){if(v<0)hasN=true;if(v>0)hasP=true}if(!hasN||!hasP)return null;
+  let rate=0.1;
+  for(let i=0;i<50;i++){let val=0,der=0;for(let t=0;t<cf.length;t++){const d=Math.pow(1+rate,t);val+=cf[t]/d;if(t>0)der+=(-t*cf[t])/Math.pow(1+rate,t+1)}if(!Number.isFinite(val)||!Number.isFinite(der)||Math.abs(der)<1e-10)break;const nx=rate-val/der;if(!Number.isFinite(nx)||nx<=-0.9999||nx>100)break;if(Math.abs(nx-rate)<1e-8)return nx*100;rate=nx}
+  let lo=-0.9999,hi=10,lv=npvCalc(lo,cf),hv=npvCalc(hi,cf);
+  if(!Number.isFinite(lv)||!Number.isFinite(hv)||lv*hv>0){const tr=[-0.9,-0.5,-0.25,0,0.05,0.1,0.2,0.35,0.5,1,2,5,10];let found=null;for(let i=0;i<tr.length-1;i++){const a=tr[i],b=tr[i+1],fa=npvCalc(a,cf),fb=npvCalc(b,cf);if(Number.isFinite(fa)&&Number.isFinite(fb)&&fa*fb<=0){found=[a,b];break}}if(!found)return null;[lo,hi]=found;lv=npvCalc(lo,cf);hv=npvCalc(hi,cf)}
+  for(let i=0;i<200;i++){const mid=(lo+hi)/2,mv=npvCalc(mid,cf);if(!Number.isFinite(mv))return null;if(Math.abs(mv)<1e-8)return mid*100;if(lv*mv<=0){hi=mid;hv=mv}else{lo=mid;lv=mv}}
+  return((lo+hi)/2)*100}
+function solveMax({annualNoi,reservePct,closingCostsPct,rehabBudget,bankLtv,bankRate,bankAmort,bankIoMonths,bankBalloonMonths,sellerLoan,sellerRate,sellerAmort,sellerIoMonths,sellerBalloonMonths,targetDSCR,targetCoC}){
+  const rr=reservePct/100,cr=closingCostsPct/100;
+  const test=(price)=>{
+    const aN=annualNoi*(1-rr);
+    const d=buildDebt({price,bankLtv,bankRate,bankAmort,bankIoMonths,bankBalloonMonths,sellerLoan,sellerRate,sellerAmort,sellerIoMonths,sellerBalloonMonths});
+    const cc=price*cr,tpc=price+cc+rehabBudget,eq=Math.max(tpc-d.totalDebt,0),ads=d.annualDebtServiceYear1,cf=aN-ads;
+    const dscr=ads>0?aN/ads:Infinity,coc=eq>0?(cf/eq)*100:Infinity;
+    return{ok:dscr>=targetDSCR&&coc>=targetCoC,bankLoan:d.bankLoan,totalDebt:d.totalDebt,equityNeeded:eq,annualDebtService:ads,cashFlow:cf,dscr,coc,adjustedNoi:aN}};
+  let lo=0,hi=Math.max(annualNoi/0.01,100000);
+  while(test(hi).ok&&hi<1e10)hi*=2;
+  for(let i=0;i<120;i++){const mid=(lo+hi)/2;test(mid).ok?lo=mid:hi=mid}
+  return{maxPrice:lo,...test(lo)}}
+function mergeSched(bs=[],ss=[]){
+  const m=Math.max(bs.length,ss.length),rows=[];
+  for(let i=0;i<m;i++){const b=bs[i]||{},s=ss[i]||{};rows.push({month:i+1,totalPayment:(b.payment||0)+(s.payment||0),totalInterest:(b.interest||0)+(s.interest||0),totalPrincipal:(b.principalPaid||0)+(s.principalPaid||0),totalBalloon:(b.balloonPayment||0)+(s.balloonPayment||0),totalEndingBalance:(b.endingBalance||0)+(s.endingBalance||0),bankPayment:b.payment||0,bankInterest:b.interest||0,bankPrincipal:b.principalPaid||0,bankBalance:b.endingBalance||0,sellerPayment:s.payment||0,sellerInterest:s.interest||0,sellerPrincipal:s.principalPaid||0,sellerBalance:s.endingBalance||0})}
+  return rows}
+function calcTier(pctShare,totalEquity,annualRows,netSaleProceeds){
+  const inv=totalEquity*(pctShare/100);
+  let totalDist=0;
+  const yrRows=annualRows.map(ar=>{
+    const invShare=ar.cf*(pctShare/100);totalDist+=invShare;
+    const coc=inv>0?(invShare/inv)*100:0;
+    return{year:ar.year,cf:ar.cf,noi:ar.noi,debt:ar.debt,invShare,sponShare:ar.cf*(1-pctShare/100),coc}});
+  const invProceeds=netSaleProceeds*(pctShare/100);
+  const flows=[-inv,...yrRows.map(r=>r.invShare)];
+  flows[flows.length-1]+=invProceeds;
+  const invIrr=irrCalc(flows);
+  const yr1CoC=inv>0?((yrRows[0]?.invShare??0)/inv)*100:0;
+  const totalBack=totalDist+inv+invProceeds;
+  return{inv,pctShare,totalDist,invProceeds,invIrr,yr1CoC,multiple:inv>0?totalBack/inv:0,yrRows}}
+function bankUnderwrite(params){
+  const DR=1.45,CR=13;
+  const dscrOnly=solveMax({...params,targetDSCR:DR,targetCoC:-999999});
+  const cocOnly=solveMax({...params,targetDSCR:-999999,targetCoC:CR});
+  const combined=solveMax({...params,targetDSCR:DR,targetCoC:CR});
+  const sensRows=[-30,-25,-20,-15,-10,-5,0,5,10,15,20,25,30].map(delta=>{
+    const testNoi=params.annualNoi*(1+delta/100);
+    const res=solveMax({...params,annualNoi:testNoi,targetDSCR:DR,targetCoC:CR});
+    const d=buildDebt({price:res.maxPrice,bankLtv:params.bankLtv,bankRate:params.bankRate,bankAmort:params.bankAmort,bankIoMonths:params.bankIoMonths,bankBalloonMonths:params.bankBalloonMonths,sellerLoan:params.sellerLoan,sellerRate:params.sellerRate,sellerAmort:params.sellerAmort,sellerIoMonths:params.sellerIoMonths,sellerBalloonMonths:params.sellerBalloonMonths});
+    return{delta,testNoi,maxPrice:res.maxPrice,maxLoan:d.bankLoan,dscr:res.dscr,coc:res.coc,eq:res.equityNeeded}});
+  const cD=buildDebt({price:combined.maxPrice,bankLtv:params.bankLtv,bankRate:params.bankRate,bankAmort:params.bankAmort,bankIoMonths:params.bankIoMonths,bankBalloonMonths:params.bankBalloonMonths,sellerLoan:params.sellerLoan,sellerRate:params.sellerRate,sellerAmort:params.sellerAmort,sellerIoMonths:params.sellerIoMonths,sellerBalloonMonths:params.sellerBalloonMonths});
+  const cAN=params.annualNoi*(1-params.reservePct/100);
+  const ceilDY=cD.totalDebt>0?(cAN/cD.totalDebt)*100:0;
+  const ceilBE=cAN>0?(cD.annualDebtServiceYear1/cAN)*100:0;
+  const ceilLtv=combined.maxPrice>0?(cD.totalDebt/combined.maxPrice)*100:0;
+  const ceilCapRate=combined.maxPrice>0?(params.annualNoi/combined.maxPrice)*100:0;
+  const ceilAdjCap=combined.maxPrice>0?(cAN/combined.maxPrice)*100:0;
+  return{DR,CR,dscrOnly,cocOnly,combined,sensRows,ceilDY,ceilBE,ceilLtv,ceilBankLoan:cD.bankLoan,ceilEquity:combined.equityNeeded,ceilCapRate,ceilAdjCap}}
 
-function getForm(){const ids=["purchasePrice","noi","closingCostsPct","reservePct","rehabBudget","bankLtv","bankRate","bankAmort","bankIoMonths","bankBalloonMonths","sellerNoteAmount","sellerRate","sellerAmort","sellerIoMonths","sellerBalloonMonths","holdYears","noiGrowth","exitCap","saleCostsPct","targetDSCR","targetCoC"];const f={};ids.forEach(id=>{f[id]=document.getElementById(id)?.value||"0"});return f}
+/* ════════════════════════════════════════════
+   STATE
+════════════════════════════════════════════ */
+let activeTab="summary",lastResult=null,chartInst=null,balChartInst=null,customPct=15;
 
-let activeTab="summary";
-let lastResult=null;
-let chartInst=null;
+function getForm(){
+  return["purchasePrice","noi","closingCostsPct","reservePct","rehabBudget","bankLtv","bankRate","bankAmort","bankIoMonths","bankBalloonMonths","sellerNoteAmount","sellerRate","sellerAmort","sellerIoMonths","sellerBalloonMonths","holdYears","noiGrowth","exitCap","saleCostsPct","targetDSCR","targetCoC"]
+    .reduce((f,id)=>{f[id]=document.getElementById(id)?.value||"0";return f},{})}
 
 function runAnalysis(){
-  const form=getForm();
-  const price=nv(form.purchasePrice),aNoi=nv(form.noi),closePct=nv(form.closingCostsPct),resPct=nv(form.reservePct),rehab=nv(form.rehabBudget);
-  const bLtv=nv(form.bankLtv),bRate=nv(form.bankRate),bAmort=nv(form.bankAmort),bIo=nv(form.bankIoMonths),bBal=nv(form.bankBalloonMonths);
-  const sLoan=nv(form.sellerNoteAmount),sRate=nv(form.sellerRate),sAmort=nv(form.sellerAmort),sIo=nv(form.sellerIoMonths),sBal=nv(form.sellerBalloonMonths);
-  const holdYears=Math.max(1,Math.round(nv(form.holdYears))),noiG=nv(form.noiGrowth),exitCap=nv(form.exitCap),saleCostsPct=nv(form.saleCostsPct);
-  const tDSCR=nv(form.targetDSCR),tCoC=nv(form.targetCoC);
+  const fm=getForm();
+  const price=nv(fm.purchasePrice),aNoi=nv(fm.noi),closePct=nv(fm.closingCostsPct),resPct=nv(fm.reservePct),rehab=nv(fm.rehabBudget);
+  const bLtv=nv(fm.bankLtv),bRate=nv(fm.bankRate),bAmort=nv(fm.bankAmort),bIo=nv(fm.bankIoMonths),bBal=nv(fm.bankBalloonMonths);
+  const sLoan=nv(fm.sellerNoteAmount),sRate=nv(fm.sellerRate),sAmort=nv(fm.sellerAmort),sIo=nv(fm.sellerIoMonths),sBal=nv(fm.sellerBalloonMonths);
+  const holdYears=Math.max(1,Math.round(nv(fm.holdYears))),noiG=nv(fm.noiGrowth),exitCap=nv(fm.exitCap),saleCostsPct=nv(fm.saleCostsPct);
+  const tDSCR=nv(fm.targetDSCR),tCoC=nv(fm.targetCoC);
   const resAmt=aNoi*(resPct/100),adjNoi=aNoi-resAmt;
   const debt=buildDebt({price,bankLtv:bLtv,bankRate:bRate,bankAmort:bAmort,bankIoMonths:bIo,bankBalloonMonths:bBal,sellerLoan:sLoan,sellerRate:sRate,sellerAmort:sAmort,sellerIoMonths:sIo,sellerBalloonMonths:sBal});
   const ads=debt.annualDebtServiceYear1,cc=price*(closePct/100),tpc=price+cc+rehab,eq=Math.max(tpc-debt.totalDebt,0);
   const capRate=price>0?(aNoi/price)*100:0,adjCap=price>0?(adjNoi/price)*100:0;
   const dscr=ads>0?adjNoi/ads:0,dy=debt.totalDebt>0?(adjNoi/debt.totalDebt)*100:0;
-  const ltv=price>0?(debt.totalDebt/price)*100:0,cf=adjNoi-ads,coc=eq>0?(cf/eq)*100:0,ber=adjNoi>0?(ads/adjNoi)*100:0;
+  const sDy=debt.bankLoan>0?(adjNoi/debt.bankLoan)*100:0;
+  const ltv=price>0?(debt.totalDebt/price)*100:0,sLtv=price>0?(debt.bankLoan/price)*100:0;
+  const cf=adjNoi-ads,coc=eq>0?(cf/eq)*100:0,ber=adjNoi>0?(ads/adjNoi)*100:0;
+  const debtConst=debt.totalDebt>0?(ads/debt.totalDebt)*100:0;
+  const grm=aNoi>0?price/aNoi:0;
   const exit=calcExit({adjustedNoi:adjNoi,noiGrowth:noiG,years:holdYears,exitCap,saleCostsPct,bankLoan:debt.bankLoan,bankRate:bRate,bankAmort:bAmort,bankIoMonths:bIo,bankBalloonMonths:bBal,sellerLoan:sLoan,sellerRate:sRate,sellerAmort:sAmort,sellerIoMonths:sIo,sellerBalloonMonths:sBal});
   const flows=buildFlows({equityNeeded:eq,adjustedNoi:adjNoi,holdYears,noiGrowth:noiG,bankSchedule:debt.bankSchedule,sellerSchedule:debt.sellerSchedule,netSaleProceeds:exit.netSaleProceeds});
   const levIrr=irrCalc(flows);
+  const unlevFlows=buildFlows({equityNeeded:price+cc+rehab,adjustedNoi:adjNoi,holdYears,noiGrowth:noiG,bankSchedule:[],sellerSchedule:[],netSaleProceeds:exit.salePrice*(1-saleCostsPct/100)});
+  const unlevIrr=irrCalc(unlevFlows);
   const dscrS=solveMax({annualNoi:aNoi,reservePct:resPct,closingCostsPct:closePct,rehabBudget:rehab,bankLtv:bLtv,bankRate:bRate,bankAmort:bAmort,bankIoMonths:bIo,bankBalloonMonths:bBal,sellerLoan:sLoan,sellerRate:sRate,sellerAmort:sAmort,sellerIoMonths:sIo,sellerBalloonMonths:sBal,targetDSCR:tDSCR,targetCoC:-999999});
   const cocS=solveMax({annualNoi:aNoi,reservePct:resPct,closingCostsPct:closePct,rehabBudget:rehab,bankLtv:bLtv,bankRate:bRate,bankAmort:bAmort,bankIoMonths:bIo,bankBalloonMonths:bBal,sellerLoan:sLoan,sellerRate:sRate,sellerAmort:sAmort,sellerIoMonths:sIo,sellerBalloonMonths:sBal,targetDSCR:-999999,targetCoC:tCoC});
   const cmbS=solveMax({annualNoi:aNoi,reservePct:resPct,closingCostsPct:closePct,rehabBudget:rehab,bankLtv:bLtv,bankRate:bRate,bankAmort:bAmort,bankIoMonths:bIo,bankBalloonMonths:bBal,sellerLoan:sLoan,sellerRate:sRate,sellerAmort:sAmort,sellerIoMonths:sIo,sellerBalloonMonths:sBal,targetDSCR:tDSCR,targetCoC:tCoC});
-  let grade="Thin";
-  if(dscr>=1.35&&coc>=10&&ltv<=75&&dy>=9)grade="Strong";
-  else if(dscr>=1.25&&coc>=8&&dy>=8)grade="Workable";
+  let grade="Thin",gradeDesc="Does not meet minimum return thresholds.";
+  if(dscr>=1.35&&coc>=10&&ltv<=75&&dy>=9){grade="Strong";gradeDesc="Excellent coverage, solid cash yield, conservative leverage."}
+  else if(dscr>=1.25&&coc>=8&&dy>=8){grade="Workable";gradeDesc="Meets minimum thresholds. Acceptable risk-return profile."}
+  else gradeDesc="Fails one or more minimum underwriting criteria.";
   const combined=mergeSched(debt.bankSchedule,debt.sellerSchedule);
   const annualRows=[];
-  const yrs=Math.ceil(combined.length/12);
-  for(let y=0;y<yrs;y++){const sl=combined.slice(y*12,(y+1)*12);const yn=adjNoi*Math.pow(1+noiG/100,y);const d=sl.reduce((s,r)=>s+r.totalPayment,0);annualRows.push({year:y+1,noi:yn,debt:d,cf:yn-d,interest:sl.reduce((s,r)=>s+r.totalInterest,0),principal:sl.reduce((s,r)=>s+r.totalPrincipal,0)})}
-  lastResult={price,aNoi,adjNoi,resAmt,rehab,bankLoan:debt.bankLoan,sellerLoan:debt.sellerLoan,totalDebt:debt.totalDebt,bankMonthly:debt.bankMonthly,sellerMonthly:debt.sellerMonthly,ads,cc,tpc,eq,capRate,adjCap,dscr,dy,ltv,cf,coc,ber,grade,levIrr,exit,combined,annualRows,flows,dscrMax:dscrS.maxPrice,cocMax:cocS.maxPrice,cmbMax:cmbS.maxPrice,tDSCR,tCoC};
+  for(let y=0;y<holdYears;y++){
+    const sl=combined.slice(y*12,(y+1)*12);
+    const yn=adjNoi*Math.pow(1+noiG/100,y);
+    const d=sl.reduce((s,r)=>s+r.totalPayment,0);
+    const bi=sl.reduce((s,r)=>s+r.bankInterest,0),bp=sl.reduce((s,r)=>s+r.bankPrincipal,0);
+    const si=sl.reduce((s,r)=>s+r.sellerInterest,0),sp=sl.reduce((s,r)=>s+r.sellerPrincipal,0);
+    annualRows.push({year:y+1,noi:yn,debt:d,cf:yn-d,interest:sl.reduce((s,r)=>s+r.totalInterest,0),principal:sl.reduce((s,r)=>s+r.totalPrincipal,0),bankInterest:bi,bankPrincipal:bp,sellerInterest:si,sellerPrincipal:sp,bankBal:sl[sl.length-1]?.bankBalance??0,sellerBal:sl[sl.length-1]?.sellerBalance??0})}
+  const inv10=calcTier(10,eq,annualRows,exit.netSaleProceeds);
+  const inv20=calcTier(20,eq,annualRows,exit.netSaleProceeds);
+  const inv30=calcTier(30,eq,annualRows,exit.netSaleProceeds);
+  const invCustom=calcTier(customPct,eq,annualRows,exit.netSaleProceeds);
+  const bankUW=bankUnderwrite({annualNoi:aNoi,reservePct:resPct,closingCostsPct:closePct,rehabBudget:rehab,bankLtv:bLtv,bankRate:bRate,bankAmort:bAmort,bankIoMonths:bIo,bankBalloonMonths:bBal,sellerLoan:sLoan,sellerRate:sRate,sellerAmort:sAmort,sellerIoMonths:sIo,sellerBalloonMonths:sBal});
+  lastResult={price,aNoi,adjNoi,resAmt,rehab,cc,tpc,eq,capRate,adjCap,dscr,dy,sDy,ltv,sLtv,cf,coc,ber,debtConst,grm,grade,gradeDesc,levIrr,unlevIrr,exit,combined,annualRows,flows,dscrMax:dscrS.maxPrice,cocMax:cocS.maxPrice,cmbMax:cmbS.maxPrice,tDSCR,tCoC,holdYears,noiG,inv10,inv20,inv30,invCustom,bankUW,bankLoan:debt.bankLoan,sellerLoan:debt.sellerLoan,totalDebt:debt.totalDebt,bankMonthly:debt.bankMonthly,sellerMonthly:debt.sellerMonthly,ads,bLtv,bRate,bAmort,bIo,bBal,sLoan,sRate,sAmort,sIo,sBal,exitCap,saleCostsPct,resPct,closePct};
   render();
-}
+  document.getElementById("main").scrollIntoView({behavior:"smooth",block:"start"})}
 
+/* ════════════════════════════════════════════
+   HELPERS
+════════════════════════════════════════════ */
 function dscrC(v){return v>=1.35?"good":v>=1.2?"warn":"bad"}
 function cocC(v){return v>=10?"good":v>=7?"warn":"bad"}
 function irrC(v){return v!=null?(v>=15?"good":v>=10?"warn":"bad"):""}
 function ltvC(v){return v<=70?"good":v<=80?"warn":"bad"}
+function dyC(v){return v>=9?"good":v>=7?"warn":"bad"}
+function row(n,v,cls=""){return`<div class="stat"><span class="stat-n">${n}</span><span class="stat-v${cls?" "+cls:""}">${v}</span></div>`}
+function secTitle(t){return`<div class="stat-section-title">${t}</div>`}
+function pbadge(pass,caut,pt,ct,ft){
+  if(pass)return`<span class="pbadge pass">✓ ${pt}</span>`;
+  if(caut)return`<span class="pbadge caut">△ ${ct}</span>`;
+  return`<span class="pbadge fail">✗ ${ft}</span>`}
+function fmtIrr(v){return v!=null?pct(v):"—"}
 
+function tierCard(data,label,thClass,ibClass){
+  const isMin=data.pctShare===10;
+  return`<div class="inv-tier">
+    <div class="inv-tier-head ${thClass}">
+      <span>${label}</span>
+      <span class="inv-badge ${ibClass}">${data.pctShare}% equity${isMin?`&nbsp;<span class="min-pill">MIN</span>`:""}</span>
+    </div>
+    <div class="inv-tier-body">
+      <div class="inv-tr"><span class="inv-tr-lbl">Investment amount</span><span class="inv-tr-val">${money(data.inv)}</span></div>
+      <div class="inv-tr"><span class="inv-tr-lbl">Year 1 cash-on-cash</span><span class="inv-tr-val ${data.yr1CoC>=10?"good":data.yr1CoC>=7?"warn":"bad"}">${pct(data.yr1CoC)}</span></div>
+      <div class="inv-tr"><span class="inv-tr-lbl">Levered IRR (full hold)</span><span class="inv-tr-val ${irrC(data.invIrr)}">${fmtIrr(data.invIrr)}</span></div>
+      <div class="inv-tr"><span class="inv-tr-lbl">Total cash distributions</span><span class="inv-tr-val">${money(data.totalDist)}</span></div>
+      <div class="inv-tr"><span class="inv-tr-lbl">Exit proceeds share</span><span class="inv-tr-val">${money(data.invProceeds)}</span></div>
+      <div class="inv-tr"><span class="inv-tr-lbl">Total return on investment</span><span class="inv-tr-val">${money(data.totalDist+data.invProceeds)}</span></div>
+      <div class="inv-tr"><span class="inv-tr-lbl">Equity multiple</span><span class="inv-tr-val ${data.multiple>=2?"good":data.multiple>=1.5?"warn":"bad"}">${data.multiple.toFixed(2)}x</span></div>
+    </div>
+  </div>`}
+
+/* ════════════════════════════════════════════
+   RENDER
+════════════════════════════════════════════ */
 function render(){
   const r=lastResult;
-  const main=document.getElementById("main");
-  main.innerHTML=`
-  <div class="grade-row ${r.grade}">
-    <div><div class="grade-lbl">Deal grade</div><div class="grade-val ${r.grade}">${r.grade}</div></div>
-    <div style="text-align:right"><div class="grade-lbl">Ceiling price</div><div style="font-size:20px;font-weight:700">${money(r.cmbMax)}</div><div style="font-size:11px;color:#888">combined target</div></div>
+  const eqMult=r.eq>0?((r.exit.netSaleProceeds+r.eq)/r.eq):0;
+  document.getElementById("main").innerHTML=`
+  <!-- GRADE BANNER -->
+  <div class="grade-banner">
+    <div class="grade-left" style="background:var(--surface2)">
+      <div class="grade-badge ${r.grade}">${r.grade}</div>
+      <div class="grade-meta">
+        <div class="grade-lbl">Deal Grade</div>
+        <div class="grade-desc">${r.gradeDesc}</div>
+      </div>
+    </div>
+    <div class="grade-right">
+      <div class="grade-stat">
+        <div class="gs-lbl">Ceiling Price</div>
+        <div class="gs-val" style="font-size:16px;color:var(--text)">${money(r.cmbMax)}</div>
+      </div>
+      <div class="grade-stat">
+        <div class="gs-lbl">Equity Needed</div>
+        <div class="gs-val" style="font-size:16px;color:var(--text)">${money(r.eq)}</div>
+      </div>
+      <div class="grade-stat">
+        <div class="gs-lbl">Levered IRR</div>
+        <div class="gs-val ${irrC(r.levIrr)}">${fmtIrr(r.levIrr)}</div>
+      </div>
+    </div>
   </div>
+
+  <!-- METRICS GRID -->
   <div class="metrics-grid">
-    <div class="mc"><div class="mc-lbl">Cap rate</div><div class="mc-val">${pct(r.capRate)}</div><div class="mc-sub">Adj: ${pct(r.adjCap)}</div></div>
-    <div class="mc"><div class="mc-lbl">DSCR</div><div class="mc-val ${dscrC(r.dscr)}">${r.dscr.toFixed(2)}×</div></div>
-    <div class="mc"><div class="mc-lbl">Cash-on-cash</div><div class="mc-val ${cocC(r.coc)}">${pct(r.coc)}</div></div>
-    <div class="mc"><div class="mc-lbl">Levered IRR</div><div class="mc-val ${irrC(r.levIrr)}">${r.levIrr!=null?pct(r.levIrr):"—"}</div></div>
-    <div class="mc"><div class="mc-lbl">LTV</div><div class="mc-val ${ltvC(r.ltv)}">${pct(r.ltv)}</div></div>
-    <div class="mc"><div class="mc-lbl">Debt yield</div><div class="mc-val">${pct(r.dy)}</div></div>
-    <div class="mc"><div class="mc-lbl">Break-even</div><div class="mc-val">${pct(r.ber)}</div><div class="mc-sub">debt / NOI</div></div>
-    <div class="mc"><div class="mc-lbl">Equity needed</div><div class="mc-val" style="font-size:16px">${money(r.eq)}</div></div>
+    <div class="mc" style="--bar-color:${r.capRate>=7?'var(--accent-blue)':'var(--text3)'}">
+      <div class="mc-lbl">Cap Rate</div>
+      <div class="mc-val" style="color:var(--text)">${pct(r.capRate)}</div>
+      <div class="mc-sub">Adj. ${pct(r.adjCap)} after reserve</div>
+      <div class="mc-bar"><div class="mc-bar-fill" style="width:${Math.min(r.capRate/12*100,100)}%;background:var(--accent-blue)"></div></div>
+    </div>
+    <div class="mc" style="--bar-color:${r.dscr>=1.35?'var(--good)':r.dscr>=1.2?'var(--warn)':'var(--bad)'}">
+      <div class="mc-lbl">DSCR</div>
+      <div class="mc-val ${dscrC(r.dscr)}">${r.dscr.toFixed(2)}x</div>
+      <div class="mc-sub">Target ≥${r.tDSCR}x · Bank ≥1.45x</div>
+      <div class="mc-bar"><div class="mc-bar-fill" style="width:${Math.min(r.dscr/2*100,100)}%;background:${r.dscr>=1.35?'var(--good)':r.dscr>=1.2?'var(--warn)':'var(--bad)'}"></div></div>
+    </div>
+    <div class="mc" style="--bar-color:${r.coc>=10?'var(--good)':r.coc>=7?'var(--warn)':'var(--bad)'}">
+      <div class="mc-lbl">Cash-on-Cash</div>
+      <div class="mc-val ${cocC(r.coc)}">${pct(r.coc)}</div>
+      <div class="mc-sub">Target ≥${r.tCoC}% · Bank ≥13%</div>
+      <div class="mc-bar"><div class="mc-bar-fill" style="width:${Math.min(r.coc/20*100,100)}%;background:${r.coc>=10?'var(--good)':r.coc>=7?'var(--warn)':'var(--bad)'}"></div></div>
+    </div>
+    <div class="mc" style="--bar-color:${(r.levIrr??0)>=15?'var(--good)':(r.levIrr??0)>=10?'var(--warn)':'var(--bad)'}">
+      <div class="mc-lbl">Levered IRR</div>
+      <div class="mc-val ${irrC(r.levIrr)}">${fmtIrr(r.levIrr)}</div>
+      <div class="mc-sub">Unlev: ${fmtIrr(r.unlevIrr)} · ${r.holdYears}-yr hold</div>
+      <div class="mc-bar"><div class="mc-bar-fill" style="width:${Math.min((r.levIrr??0)/25*100,100)}%;background:${(r.levIrr??0)>=15?'var(--good)':(r.levIrr??0)>=10?'var(--warn)':'var(--bad)'}"></div></div>
+    </div>
+    <div class="mc" style="--bar-color:${r.ltv<=70?'var(--good)':r.ltv<=80?'var(--warn)':'var(--bad)'}">
+      <div class="mc-lbl">LTV</div>
+      <div class="mc-val ${ltvC(r.ltv)}">${pct(r.ltv)}</div>
+      <div class="mc-sub">Senior: ${pct(r.sLtv)} · Total: ${pct(r.ltv)}</div>
+      <div class="mc-bar"><div class="mc-bar-fill" style="width:${Math.min(r.ltv,100)}%;background:${r.ltv<=70?'var(--good)':r.ltv<=80?'var(--warn)':'var(--bad)'}"></div></div>
+    </div>
+    <div class="mc" style="--bar-color:${r.dy>=9?'var(--good)':r.dy>=7?'var(--warn)':'var(--bad)'}">
+      <div class="mc-lbl">Debt Yield</div>
+      <div class="mc-val ${dyC(r.dy)}">${pct(r.dy)}</div>
+      <div class="mc-sub">Senior: ${pct(r.sDy)} · Pref ≥9%</div>
+      <div class="mc-bar"><div class="mc-bar-fill" style="width:${Math.min(r.dy/15*100,100)}%;background:${r.dy>=9?'var(--good)':r.dy>=7?'var(--warn)':'var(--bad)'}"></div></div>
+    </div>
+    <div class="mc" style="--bar-color:var(--text3)">
+      <div class="mc-lbl">Break-even Ratio</div>
+      <div class="mc-val" style="color:var(--text)">${pct(r.ber)}</div>
+      <div class="mc-sub">Debt service / adj. NOI</div>
+      <div class="mc-bar"><div class="mc-bar-fill" style="width:${Math.min(r.ber,100)}%;background:var(--text3)"></div></div>
+    </div>
+    <div class="mc" style="--bar-color:${eqMult>=2?'var(--good)':eqMult>=1.5?'var(--warn)':'var(--bad)'}">
+      <div class="mc-lbl">Equity Multiple</div>
+      <div class="mc-val ${eqMult>=2?"good":eqMult>=1.5?"warn":"bad"}">${eqMult>0?eqMult.toFixed(2)+"x":"—"}</div>
+      <div class="mc-sub">Total return on equity</div>
+      <div class="mc-bar"><div class="mc-bar-fill" style="width:${Math.min(eqMult/3*100,100)}%;background:${eqMult>=2?'var(--good)':eqMult>=1.5?'var(--warn)':'var(--bad)'}"></div></div>
+    </div>
   </div>
+
+  <!-- TAB CARD -->
   <div class="card">
-    <div class="card-head"><div class="tabs" id="tabRow">
-      <button class="tab${activeTab==="summary"?" on":""}" onclick="setTab('summary')">Summary</button>
-      <button class="tab${activeTab==="cashflows"?" on":""}" onclick="setTab('cashflows')">Cash flows</button>
-      <button class="tab${activeTab==="exit"?" on":""}" onclick="setTab('exit')">Exit</button>
-      <button class="tab${activeTab==="chart"?" on":""}" onclick="setTab('chart')">Chart</button>
-      <button class="tab${activeTab==="amort"?" on":""}" onclick="setTab('amort')">Amort.</button>
-      <button class="tab${activeTab==="ceilings"?" on":""}" onclick="setTab('ceilings')">Max price</button>
-    </div></div>
+    <div class="card-head">
+      <div class="tabs">
+        <button class="tab${activeTab==="summary"?" on":""}" onclick="setTab('summary')">Summary</button>
+        <button class="tab${activeTab==="sources"?" on":""}" onclick="setTab('sources')">Sources &amp; Uses</button>
+        <button class="tab${activeTab==="cashflows"?" on":""}" onclick="setTab('cashflows')">Cash Flows</button>
+        <button class="tab${activeTab==="exit"?" on":""}" onclick="setTab('exit')">Exit Analysis</button>
+        <button class="tab${activeTab==="chart"?" on":""}" onclick="setTab('chart')">Chart</button>
+        <button class="tab${activeTab==="amort"?" on":""}" onclick="setTab('amort')">Amortization</button>
+        <button class="tab${activeTab==="ceilings"?" on":""}" onclick="setTab('ceilings')">Max Price</button>
+        <button class="tab inv-tab${activeTab==="investor"?" on":""}" onclick="setTab('investor')">Investor</button>
+        <button class="tab bank-tab${activeTab==="bank"?" on":""}" onclick="setTab('bank')">Bank UW</button>
+      </div>
+    </div>
     <div class="card-body" id="tabBody">${tabContent()}</div>
   </div>`;
-  if(activeTab==="chart")buildChart();
-}
+  if(activeTab==="chart")buildChart()}
 
 function setTab(t){activeTab=t;render()}
+function updateCustom(val){
+  const v=Math.max(10,Math.min(100,parseInt(val)||10));
+  customPct=v;if(lastResult){render()}}
 
+/* ════════════════════════════════════════════
+   TAB CONTENT
+════════════════════════════════════════════ */
 function tabContent(){
   const r=lastResult;
-  if(activeTab==="summary")return`
+
+  if(activeTab==="summary") return`
     <div class="two-col">
       <div>
-        ${row("Purchase price",money(r.price))}${row("Annual NOI",money(r.aNoi))}${row("Reserve",money(r.resAmt))}${row("Adjusted NOI",money(r.adjNoi))}${row("Rehab",money(r.rehab))}${row("Closing costs",money(r.cc))}${row("Total project cost",money(r.tpc))}
-      </div><div>
-        ${row("Bank loan",money(r.bankLoan))}${row("Bank monthly pmt",money(r.bankMonthly))}${row("Seller note",money(r.sellerLoan))}${row("Seller monthly pmt",money(r.sellerMonthly))}${row("Total debt",money(r.totalDebt))}${row("Annual debt service",money(r.ads))}${row("Annual cash flow",money(r.cf),r.cf>=0?"pos":"neg")}
+        ${secTitle("Income")}
+        ${row("Gross Annual NOI",money(r.aNoi))}
+        ${row("Vacancy / Reserve",money(r.resAmt))}
+        ${row("Adjusted NOI",money(r.adjNoi))}
+        ${secTitle("Returns")}
+        ${row("Cap Rate",pct(r.capRate))}
+        ${row("Adjusted Cap Rate",pct(r.adjCap))}
+        ${row("Cash-on-Cash Yr 1",pct(r.coc),cocC(r.coc))}
+        ${row("Levered IRR",fmtIrr(r.levIrr),irrC(r.levIrr))}
+        ${row("Unlevered IRR",fmtIrr(r.unlevIrr))}
+        ${row("Equity Multiple",r.eq>0?((r.exit.netSaleProceeds+r.eq)/r.eq).toFixed(2)+"x":"—")}
+        ${secTitle("Risk Metrics")}
+        ${row("DSCR",r.dscr.toFixed(2)+"x",dscrC(r.dscr))}
+        ${row("Debt Yield",pct(r.dy),dyC(r.dy))}
+        ${row("Senior Debt Yield",pct(r.sDy))}
+        ${row("Break-even Ratio",pct(r.ber))}
+        ${row("Debt Constant",pct(r.debtConst))}
+        ${row("Gross Rent Multiplier",r.grm.toFixed(2)+"x")}
+      </div>
+      <div>
+        ${secTitle("Debt Structure")}
+        ${row("Bank Loan",money(r.bankLoan))}
+        ${row("Bank LTV",pct(r.bLtv))}
+        ${row("Bank Rate",pct(r.bRate))}
+        ${row("Bank Monthly Payment",money(r.bankMonthly))}
+        ${row("Seller Note",money(r.sellerLoan))}
+        ${row("Seller Rate",pct(r.sRate))}
+        ${row("Seller Monthly Payment",money(r.sellerMonthly))}
+        ${row("Total Debt",money(r.totalDebt))}
+        ${row("Total LTV",pct(r.ltv),ltvC(r.ltv))}
+        ${row("Annual Debt Service",money(r.ads))}
+        ${secTitle("Cash Flow")}
+        ${row("Adjusted NOI",money(r.adjNoi))}
+        ${row("Annual Debt Service",money(r.ads))}
+        ${row("Annual Free Cash Flow",money(r.cf),r.cf>=0?"pos":"neg")}
+        ${row("Monthly Cash Flow",money(r.cf/12),r.cf>=0?"pos":"neg")}
       </div>
     </div>`;
-  if(activeTab==="cashflows")return`
-    <table>
-      <thead><tr><th>Year</th><th>Adj. NOI</th><th>Debt svc</th><th>Cash flow</th><th>Interest</th><th>Principal</th></tr></thead>
-      <tbody>${r.annualRows.map(ar=>`<tr><td>Yr ${ar.year}</td><td>${money(ar.noi)}</td><td>${money(ar.debt)}</td><td class="${ar.cf>=0?"pos":"neg"}">${money(ar.cf)}</td><td>${money(ar.interest)}</td><td>${money(ar.principal)}</td></tr>`).join("")}</tbody>
-      <tfoot><tr><td>Sale proceeds</td><td colspan="2"></td><td class="${r.exit.netSaleProceeds>=0?"pos":"neg"}">${money(r.exit.netSaleProceeds)}</td><td colspan="2"></td></tr></tfoot>
-    </table>`;
-  if(activeTab==="exit")return`
+
+  if(activeTab==="sources") return`
     <div class="two-col">
-      <div>${row("Terminal NOI",money(r.exit.terminalNoi))}${row("Sale price",money(r.exit.salePrice))}${row("Sale costs",money(r.exit.salePrice-r.exit.netSalePrice))}${row("Net sale price",money(r.exit.netSalePrice))}</div>
-      <div>${row("Bank payoff",money(r.exit.bankBalance))}${row("Seller payoff",money(r.exit.sellerBalance))}${row("Net proceeds",money(r.exit.netSaleProceeds),r.exit.netSaleProceeds>=0?"pos":"neg")}${row("Equity multiple",r.eq>0?((r.exit.netSaleProceeds+r.eq)/r.eq).toFixed(2)+"×":"—")}</div>
+      <div>
+        ${secTitle("Sources of Capital")}
+        ${row("Bank Loan",money(r.bankLoan))}
+        ${row("Seller Note / Mezz",money(r.sellerLoan))}
+        ${row("Equity (Cash In)",money(r.eq))}
+        <div style="height:1px;background:var(--border2);margin:8px 0"></div>
+        ${row("Total Sources",money(r.bankLoan+r.sellerLoan+r.eq))}
+        ${secTitle("Loan-to-Value")}
+        ${row("Senior LTV (Bank)",pct(r.sLtv))}
+        ${row("Total LTV (Bank+Seller)",pct(r.ltv))}
+        ${row("Equity as % of Cost",pct(r.tpc>0?r.eq/r.tpc*100:0))}
+        ${secTitle("Debt Service — Year 1")}
+        ${row("Bank Annual Debt Service",money(r.bankMonthly*12))}
+        ${row("Seller Annual Debt Service",money(r.sellerMonthly*12))}
+        ${row("Total Annual Debt Service",money(r.ads))}
+        ${row("Monthly Debt Service",money(r.ads/12))}
+      </div>
+      <div>
+        ${secTitle("Uses of Capital")}
+        ${row("Purchase Price",money(r.price))}
+        ${row("Closing Costs",money(r.cc))}
+        ${row("Rehab / CapEx Budget",money(r.rehab))}
+        <div style="height:1px;background:var(--border2);margin:8px 0"></div>
+        ${row("Total Project Cost",money(r.tpc))}
+        ${secTitle("Equity Waterfall")}
+        ${row("Total Project Cost",money(r.tpc))}
+        ${row("Less: Total Debt",money(r.totalDebt))}
+        ${row("Equity Required",money(r.eq))}
+        ${secTitle("Key Ratios")}
+        ${row("Cap Rate",pct(r.capRate))}
+        ${row("Adjusted Cap Rate",pct(r.adjCap))}
+        ${row("Debt Yield",pct(r.dy))}
+        ${row("Debt Constant",pct(r.debtConst))}
+        ${row("DSCR",r.dscr.toFixed(2)+"x",dscrC(r.dscr))}
+        ${row("Break-even Ratio",pct(r.ber))}
+      </div>
     </div>`;
-  if(activeTab==="chart")return`
+
+  if(activeTab==="cashflows") return`
+    <div class="table-scroll"><table>
+      <thead>
+        <tr>
+          <th>Year</th><th>Adj. NOI</th><th>Bank Debt Svc</th><th>Seller Debt Svc</th>
+          <th>Total Debt Svc</th><th>Free Cash Flow</th><th>CoC Return</th><th>Cum. Cash Flow</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${(()=>{let cumCF=0;return r.annualRows.map(ar=>{
+          const bankADS=ar.bankInterest+ar.bankPrincipal;
+          const sellerADS=ar.sellerInterest+ar.sellerPrincipal;
+          cumCF+=ar.cf;
+          const coc=r.eq>0?(ar.cf/r.eq)*100:0;
+          return`<tr>
+            <td>Year ${ar.year}</td>
+            <td>${money(ar.noi)}</td>
+            <td>${money(bankADS)}</td>
+            <td>${money(sellerADS)}</td>
+            <td>${money(ar.debt)}</td>
+            <td class="${ar.cf>=0?"pos":"neg"}">${money(ar.cf)}</td>
+            <td class="${cocC(coc)}">${pct(coc)}</td>
+            <td class="${cumCF>=0?"pos":"neg"}">${money(cumCF)}</td>
+          </tr>`}).join("")})()}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td>Totals</td>
+          <td>${money(r.annualRows.reduce((s,a)=>s+a.noi,0))}</td>
+          <td>${money(r.annualRows.reduce((s,a)=>s+a.bankInterest+a.bankPrincipal,0))}</td>
+          <td>${money(r.annualRows.reduce((s,a)=>s+a.sellerInterest+a.sellerPrincipal,0))}</td>
+          <td>${money(r.annualRows.reduce((s,a)=>s+a.debt,0))}</td>
+          <td class="${r.annualRows.reduce((s,a)=>s+a.cf,0)>=0?"pos":"neg"}">${money(r.annualRows.reduce((s,a)=>s+a.cf,0))}</td>
+          <td>—</td><td>—</td>
+        </tr>
+        <tr>
+          <td>Sale Proceeds</td>
+          <td colspan="4" style="text-align:left;color:var(--text3);font-size:10px">Net sale after payoffs and sale costs</td>
+          <td class="${r.exit.netSaleProceeds>=0?"pos":"neg"}">${money(r.exit.netSaleProceeds)}</td>
+          <td>—</td><td>—</td>
+        </tr>
+      </tfoot>
+    </table></div>
+    <div style="margin-top:18px">
+      <div class="sub-head">Annual Debt Detail</div>
+      <div class="table-scroll"><table>
+        <thead>
+          <tr>
+            <th>Year</th><th>Bank Interest</th><th>Bank Principal</th><th>Seller Interest</th>
+            <th>Seller Principal</th><th>Total Interest</th><th>Total Principal</th>
+            <th>Bank Balance</th><th>Seller Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${r.annualRows.map(ar=>`<tr>
+            <td>Year ${ar.year}</td>
+            <td>${money(ar.bankInterest)}</td><td>${money(ar.bankPrincipal)}</td>
+            <td>${money(ar.sellerInterest)}</td><td>${money(ar.sellerPrincipal)}</td>
+            <td>${money(ar.interest)}</td><td>${money(ar.principal)}</td>
+            <td>${money(ar.bankBal)}</td><td>${money(ar.sellerBal)}</td>
+          </tr>`).join("")}
+        </tbody>
+      </table></div>
+    </div>`;
+
+  if(activeTab==="exit") return`
+    <div class="two-col">
+      <div>
+        ${secTitle("Sale Price Derivation")}
+        ${row("Year 1 Adjusted NOI",money(r.adjNoi))}
+        ${row("NOI Growth Rate",pct(r.noiG))}
+        ${row("Hold Period",r.holdYears+" years")}
+        ${row("Terminal NOI",money(r.exit.terminalNoi))}
+        ${row("Exit Cap Rate",pct(r.exitCap))}
+        ${row("Gross Sale Price",money(r.exit.salePrice))}
+        ${row("Sale Transaction Costs",money(r.exit.salePrice-r.exit.netSalePrice)+" ("+pct(r.saleCostsPct)+")")}
+        ${row("Net Sale Price",money(r.exit.netSalePrice))}
+        ${secTitle("Return on Sale")}
+        ${row("Net Sale Price",money(r.exit.netSalePrice))}
+        ${row("Less: Bank Loan Payoff",money(r.exit.bankBalance))}
+        ${row("Less: Seller Note Payoff",money(r.exit.sellerBalance))}
+        ${row("Net Sale Proceeds to Equity",money(r.exit.netSaleProceeds),r.exit.netSaleProceeds>=0?"pos":"neg")}
+      </div>
+      <div>
+        ${secTitle("Return Summary")}
+        ${row("Equity Invested",money(r.eq))}
+        ${row("Total Cash Distributions",money(r.annualRows.reduce((s,a)=>s+a.cf,0)))}
+        ${row("Sale Proceeds to Equity",money(r.exit.netSaleProceeds))}
+        ${row("Total Return",money(r.annualRows.reduce((s,a)=>s+a.cf,0)+r.exit.netSaleProceeds))}
+        ${row("Equity Multiple",r.eq>0?((r.exit.netSaleProceeds+r.eq)/r.eq).toFixed(2)+"x":"—")}
+        ${row("Levered IRR",fmtIrr(r.levIrr),irrC(r.levIrr))}
+        ${row("Unlevered IRR",fmtIrr(r.unlevIrr))}
+        ${secTitle("Value Change")}
+        ${row("Purchase Price",money(r.price))}
+        ${row("Gross Exit Value",money(r.exit.salePrice))}
+        ${row("Value Change",money(r.exit.salePrice-r.price),(r.exit.salePrice>=r.price?"pos":"neg"))}
+        ${row("Value Change %",pct(r.price>0?(r.exit.salePrice-r.price)/r.price*100:0))}
+        ${row("Entry Cap Rate",pct(r.capRate))}
+        ${row("Exit Cap Rate",pct(r.exitCap))}
+        ${row("Cap Rate Compression",pct(r.capRate-r.exitCap,2))}
+      </div>
+    </div>`;
+
+  if(activeTab==="chart") return`
     <div class="legend">
-      <span><span class="legend-dot" style="background:#378add"></span>Adj. NOI</span>
-      <span><span class="legend-dot" style="background:#b4b2a9"></span>Debt svc</span>
-      <span><span class="legend-dot" style="background:#639922"></span>Cash flow</span>
+      <span><span class="legend-dot" style="background:var(--accent-blue)"></span>Adj. NOI</span>
+      <span><span class="legend-dot" style="background:var(--text3)"></span>Total Debt Svc</span>
+      <span><span class="legend-dot" style="background:var(--good)"></span>Free Cash Flow</span>
     </div>
-    <div class="chart-wrap"><canvas id="cfChart"></canvas></div>`;
-  if(activeTab==="amort")return`<div style="font-size:11px;color:#888;margin-bottom:8px">Combined bank + seller schedule. Balloon payments shown in red.</div><div class="amort-wrap"><table><thead><tr><th>Mo.</th><th>Payment</th><th>Interest</th><th>Principal</th><th>Balloon</th><th>Balance</th></tr></thead><tbody>${r.combined.map(ro=>`<tr><td>${ro.month}</td><td>${money(ro.totalPayment)}</td><td>${money(ro.totalInterest)}</td><td>${money(ro.totalPrincipal)}</td><td class="${ro.totalBalloon>0?"balloon":""}">${ro.totalBalloon>0?money(ro.totalBalloon):"—"}</td><td>${money(ro.totalEndingBalance)}</td></tr>`).join("")}</tbody></table></div>`;
-  if(activeTab==="ceilings")return`
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
-      <div class="ceil-box"><div class="ceil-lbl">DSCR only (≥${r.tDSCR}×)</div><div class="ceil-val">${money(r.dscrMax)}</div></div>
-      <div class="ceil-box"><div class="ceil-lbl">CoC only (≥${r.tCoC}%)</div><div class="ceil-val">${money(r.cocMax)}</div></div>
-      <div class="ceil-box" style="border:2px solid #1a1a1a"><div class="ceil-lbl">Combined ceiling</div><div class="ceil-val">${money(r.cmbMax)}</div><div class="ceil-desc">Both constraints</div></div>
+    <div class="chart-wrap"><canvas id="cfChart"></canvas></div>
+    <div style="margin-top:24px">
+      <div class="legend">
+        <span><span class="legend-dot" style="background:#a78bfa"></span>Bank Balance</span>
+        <span><span class="legend-dot" style="background:var(--warn)"></span>Seller Balance</span>
+      </div>
+      <div class="chart-wrap" style="height:180px"><canvas id="balChart"></canvas></div>
     </div>`;
-  return "";
+
+  if(activeTab==="amort") return`
+    <div style="font-size:11px;color:var(--text3);margin-bottom:12px;line-height:1.6">
+      Full monthly schedule for bank and seller note combined. Balloon payments highlighted.
+      <strong style="color:var(--text2)">${r.combined.length} total months</strong> displayed.
+    </div>
+    <div class="amort-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Mo.</th><th>Bank Pmt</th><th>Bank Int.</th><th>Bank Prin.</th><th>Bank Bal.</th>
+            <th>Seller Pmt</th><th>Seller Int.</th><th>Seller Prin.</th><th>Seller Bal.</th>
+            <th>Total Pmt</th><th>Balloon</th><th>Total Bal.</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${r.combined.map(ro=>`<tr>
+            <td>${ro.month}</td>
+            <td>${money(ro.bankPayment)}</td><td>${money(ro.bankInterest)}</td>
+            <td>${money(ro.bankPrincipal)}</td><td>${money(ro.bankBalance)}</td>
+            <td>${money(ro.sellerPayment)}</td><td>${money(ro.sellerInterest)}</td>
+            <td>${money(ro.sellerPrincipal)}</td><td>${money(ro.sellerBalance)}</td>
+            <td style="color:var(--text)">${money(ro.totalPayment)}</td>
+            <td class="${ro.totalBalloon>0?"balloon":""}">${ro.totalBalloon>0?money(ro.totalBalloon):"—"}</td>
+            <td>${money(ro.totalEndingBalance)}</td>
+          </tr>`).join("")}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td>Totals</td>
+            <td>${money(r.combined.reduce((s,x)=>s+x.bankPayment,0))}</td>
+            <td>${money(r.combined.reduce((s,x)=>s+x.bankInterest,0))}</td>
+            <td>${money(r.combined.reduce((s,x)=>s+x.bankPrincipal,0))}</td>
+            <td>—</td>
+            <td>${money(r.combined.reduce((s,x)=>s+x.sellerPayment,0))}</td>
+            <td>${money(r.combined.reduce((s,x)=>s+x.sellerInterest,0))}</td>
+            <td>${money(r.combined.reduce((s,x)=>s+x.sellerPrincipal,0))}</td>
+            <td>—</td>
+            <td>${money(r.combined.reduce((s,x)=>s+x.totalPayment,0))}</td>
+            <td>${money(r.combined.reduce((s,x)=>s+x.totalBalloon,0))}</td>
+            <td>—</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>`;
+
+  if(activeTab==="ceilings") return`
+    <div class="ceil-boxes">
+      <div class="ceil-box">
+        <div class="ceil-lbl">DSCR Only (≥${r.tDSCR}x)</div>
+        <div class="ceil-val">${money(r.dscrMax)}</div>
+        <div class="ceil-sub">Max price where DSCR ≥${r.tDSCR}x. CoC unconstrained.</div>
+      </div>
+      <div class="ceil-box">
+        <div class="ceil-lbl">CoC Only (≥${r.tCoC}%)</div>
+        <div class="ceil-val">${money(r.cocMax)}</div>
+        <div class="ceil-sub">Max price where CoC ≥${r.tCoC}%. DSCR unconstrained.</div>
+      </div>
+      <div class="ceil-box featured">
+        <div class="ceil-lbl" style="color:var(--accent)">★ Combined Ceiling</div>
+        <div class="ceil-val" style="color:var(--accent)">${money(r.cmbMax)}</div>
+        <div class="ceil-sub">Both DSCR ≥${r.tDSCR}x <em>and</em> CoC ≥${r.tCoC}% satisfied. This is your max offer price.</div>
+      </div>
+    </div>
+    <div class="two-col">
+      <div>
+        ${secTitle("At Ceiling — Deal Metrics")}
+        ${row("Purchase Price at Ceiling",money(r.cmbMax))}
+        ${row("Bank Loan at Ceiling",money(r.cmbMax*r.bLtv/100))}
+        ${row("Equity at Ceiling",money(r.cmbMax*(1+r.closePct/100)-r.cmbMax*r.bLtv/100-r.sellerLoan))}
+        ${row("Cap Rate at Ceiling",pct(r.aNoi/r.cmbMax*100))}
+        ${row("Actual Price",money(r.price))}
+        ${row("Headroom / (Deficit)",money(r.cmbMax-r.price),(r.cmbMax>=r.price?"pos":"neg"))}
+      </div>
+      <div>
+        ${secTitle("Interpretation")}
+        ${row("Actual vs. DSCR Max",money(r.price-r.dscrMax),(r.dscrMax>=r.price?"good":"bad"))}
+        ${row("Actual vs. CoC Max",money(r.price-r.cocMax),(r.cocMax>=r.price?"good":"bad"))}
+        ${row("Actual vs. Combined",money(r.price-r.cmbMax),(r.cmbMax>=r.price?"good":"bad"))}
+        ${row("Binding Constraint",r.dscrMax<=r.cocMax?"DSCR":"CoC")}
+        ${row("Your Deal Targets",`DSCR ≥${r.tDSCR}x / CoC ≥${r.tCoC}%`)}
+        ${row("Bank Targets","DSCR ≥1.45x / CoC ≥13%")}
+      </div>
+    </div>`;
+
+  if(activeTab==="investor"){
+    const minInv=r.eq*0.10;
+    const cData=calcTier(customPct,r.eq,r.annualRows,r.exit.netSaleProceeds);
+    return`
+    <div class="inv-notice">
+      <strong>How it works:</strong> Investors own a percentage of the equity pool pro-rata. All cash flows and exit proceeds split at each investor's ownership percentage.
+      <strong>Minimum investment = 10% of required equity = ${money(minInv)}.</strong>
+      Sponsor retains remaining equity. Investor CoC target: ≥10% annually.
+    </div>
+    <div class="inv-hero">
+      <div class="inv-kpi">
+        <div class="inv-kpi-lbl">Total Equity Pool</div>
+        <div class="inv-kpi-val" style="color:var(--text)">${money(r.eq)}</div>
+        <div class="inv-kpi-sub">Required to close</div>
+      </div>
+      <div class="inv-kpi">
+        <div class="inv-kpi-lbl">Min. Investment (10%)</div>
+        <div class="inv-kpi-val" style="color:var(--warn)">${money(minInv)}</div>
+        <div class="inv-kpi-sub">Minimum entry threshold</div>
+      </div>
+      <div class="inv-kpi">
+        <div class="inv-kpi-lbl">Deal CoC — Year 1</div>
+        <div class="inv-kpi-val ${r.coc>=10?"good":r.coc>=7?"warn":"bad"}">${pct(r.coc)}</div>
+        <div class="inv-kpi-sub">Investor target ≥10%</div>
+      </div>
+      <div class="inv-kpi">
+        <div class="inv-kpi-lbl">Levered IRR</div>
+        <div class="inv-kpi-val ${irrC(r.levIrr)}">${fmtIrr(r.levIrr)}</div>
+        <div class="inv-kpi-sub">${r.holdYears}-yr hold period</div>
+      </div>
+      <div class="inv-kpi">
+        <div class="inv-kpi-lbl">Equity Multiple</div>
+        <div class="inv-kpi-val" style="color:var(--accent-blue)">${r.eq>0?((r.exit.netSaleProceeds+r.eq)/r.eq).toFixed(2)+"x":"—"}</div>
+        <div class="inv-kpi-sub">Total return on equity</div>
+      </div>
+    </div>
+    <div class="sub-head">Investment Tier Scenarios — Min 10% Equity</div>
+    <div class="inv-tiers">
+      ${tierCard(r.inv10,"10% Tier","th10","ib10")}
+      ${tierCard(r.inv20,"20% Tier","th20","ib20")}
+      ${tierCard(r.inv30,"30% Tier","th30","ib30")}
+    </div>
+    <div class="sub-head">Custom Investor Scenario</div>
+    <div class="inv-custom-bar">
+      <label>Ownership %:</label>
+      <input type="number" id="customPctInput" min="10" max="100" step="5" value="${customPct}" onchange="updateCustom(this.value)">
+      <span style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:var(--warn);letter-spacing:.1em">% of equity</span>
+      <span class="inv-custom-note">= ${money(cData.inv)} invested · Sponsor retains ${money(r.eq-cData.inv)} · Min 10%</span>
+    </div>
+    <div class="inv-tiers two-up" style="grid-template-columns:1fr 1fr">
+      ${tierCard(cData,"Custom Scenario","thcustom","ibcustom")}
+      <div style="padding:16px;background:var(--surface2);border-radius:var(--r);border:1px solid var(--border2)">
+        <div class="sub-head" style="margin-top:0">Custom scenario detail</div>
+        ${row("Investor ownership",pct(cData.pctShare,0))}
+        ${row("Investor equity",money(cData.inv))}
+        ${row("Sponsor equity",money(r.eq-cData.inv))}
+        ${row("Yr 1 investor cash flow",money(cData.yrRows[0]?.invShare??0),cData.yrRows[0]?.invShare>=0?"pos":"neg")}
+        ${row("Yr 1 sponsor cash flow",money(cData.yrRows[0]?.sponShare??0))}
+        ${row("Total investor distributions",money(cData.totalDist))}
+        ${row("Investor exit proceeds",money(cData.invProceeds))}
+        ${row("Investor total return",money(cData.totalDist+cData.invProceeds),"pos")}
+        ${row("Investor IRR",fmtIrr(cData.invIrr),irrC(cData.invIrr))}
+        ${row("Equity multiple",cData.multiple.toFixed(2)+"x")}
+      </div>
+    </div>
+    <div class="sub-head" style="margin-top:18px">Annual Distribution Schedule — 10% Tier (Min Investment = ${money(minInv)})</div>
+    <div class="table-scroll"><table>
+      <thead>
+        <tr>
+          <th>Year</th><th>Adj. NOI</th><th>Total Debt Svc</th><th>Total Free CF</th>
+          <th>Investor 10% Share</th><th>Sponsor 90% Share</th><th>Investor CoC</th><th>Cumul. CF</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${(()=>{let cum=0;return r.inv10.yrRows.map(yr=>{cum+=yr.invShare;return`<tr class="${yr.coc>=10?"yr-highlight":""}">
+          <td>Year ${yr.year}</td>
+          <td>${money(yr.noi)}</td><td>${money(yr.debt)}</td>
+          <td class="${yr.cf>=0?"pos":"neg"}">${money(yr.cf)}</td>
+          <td class="${yr.invShare>=0?"pos":"neg"}">${money(yr.invShare)}</td>
+          <td>${money(yr.sponShare)}</td>
+          <td class="${yr.coc>=10?"good":yr.coc>=7?"warn":"bad"}">${pct(yr.coc)}</td>
+          <td class="${cum>=0?"pos":"neg"}">${money(cum)}</td>
+        </tr>`}).join("")})()}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td>Exit Proceeds</td>
+          <td colspan="2" style="text-align:left;color:var(--text3)">Net sale proceeds after all debt payoffs</td>
+          <td class="${r.exit.netSaleProceeds>=0?"pos":"neg"}">${money(r.exit.netSaleProceeds)}</td>
+          <td class="pos">${money(r.inv10.invProceeds)}</td>
+          <td>${money(r.exit.netSaleProceeds-r.inv10.invProceeds)}</td>
+          <td>—</td><td>—</td>
+        </tr>
+        <tr>
+          <td>Grand Total</td><td colspan="2"></td>
+          <td>${money(r.annualRows.reduce((s,a)=>s+a.cf,0)+r.exit.netSaleProceeds)}</td>
+          <td class="pos">${money(r.inv10.totalDist+r.inv10.invProceeds)}</td>
+          <td>${money((r.annualRows.reduce((s,a)=>s+a.cf,0)+r.exit.netSaleProceeds)-r.inv10.totalDist-r.inv10.invProceeds)}</td>
+          <td>—</td><td>—</td>
+        </tr>
+      </tfoot>
+    </table></div>
+    <div class="sub-head" style="margin-top:18px">All Tier Comparison</div>
+    <div class="table-scroll"><table>
+      <thead>
+        <tr><th>Metric</th><th>10% Tier (Min)</th><th>20% Tier</th><th>30% Tier</th><th>Custom (${customPct}%)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Investment amount</td><td>${money(r.inv10.inv)}</td><td>${money(r.inv20.inv)}</td><td>${money(r.inv30.inv)}</td><td>${money(cData.inv)}</td></tr>
+        <tr><td>Year 1 CoC</td><td class="${r.inv10.yr1CoC>=10?"good":"bad"}">${pct(r.inv10.yr1CoC)}</td><td class="${r.inv20.yr1CoC>=10?"good":"bad"}">${pct(r.inv20.yr1CoC)}</td><td class="${r.inv30.yr1CoC>=10?"good":"bad"}">${pct(r.inv30.yr1CoC)}</td><td class="${cData.yr1CoC>=10?"good":"bad"}">${pct(cData.yr1CoC)}</td></tr>
+        <tr><td>Levered IRR</td><td class="${irrC(r.inv10.invIrr)}">${fmtIrr(r.inv10.invIrr)}</td><td class="${irrC(r.inv20.invIrr)}">${fmtIrr(r.inv20.invIrr)}</td><td class="${irrC(r.inv30.invIrr)}">${fmtIrr(r.inv30.invIrr)}</td><td class="${irrC(cData.invIrr)}">${fmtIrr(cData.invIrr)}</td></tr>
+        <tr><td>Total cash distributions</td><td>${money(r.inv10.totalDist)}</td><td>${money(r.inv20.totalDist)}</td><td>${money(r.inv30.totalDist)}</td><td>${money(cData.totalDist)}</td></tr>
+        <tr><td>Exit proceeds</td><td>${money(r.inv10.invProceeds)}</td><td>${money(r.inv20.invProceeds)}</td><td>${money(r.inv30.invProceeds)}</td><td>${money(cData.invProceeds)}</td></tr>
+        <tr><td>Equity multiple</td><td>${r.inv10.multiple.toFixed(2)}x</td><td>${r.inv20.multiple.toFixed(2)}x</td><td>${r.inv30.multiple.toFixed(2)}x</td><td>${cData.multiple.toFixed(2)}x</td></tr>
+      </tbody>
+    </table></div>`}
+
+  if(activeTab==="bank"){
+    const bw=r.bankUW;
+    const dscrOk=r.dscr>=bw.DR,cocOk=r.coc>=bw.CR,ltvOk=r.ltv<=75,dyOk=r.dy>=9,priceOk=r.price<=bw.combined.maxPrice;
+    const passes=[dscrOk,cocOk,ltvOk,dyOk,priceOk].filter(Boolean).length;
+    const vClass=passes===5?"approve":passes>=3?"conditional":"decline";
+    const vLabel=passes===5?"Recommend Approval":passes>=3?"Conditional Review — Further Analysis Required":"Does Not Qualify";
+    const overage=Math.abs(r.price-bw.combined.maxPrice);
+    return`
+    <div class="bank-verdict ${vClass}">
+      <div class="bv-left">
+        <div class="bv-label">Bank Underwriting Decision</div>
+        <div class="bv-status bv-${vClass}">${vLabel}</div>
+        <div class="bv-sub">
+          Hard criteria: DSCR ≥${bw.DR}x &amp; CoC ≥${bw.CR}% · ${passes} of 5 criteria pass<br>
+          Purchase price of ${money(r.price)} is ${priceOk?`<strong style="color:var(--good)">under the ceiling</strong> by ${money(overage)}`:`<strong style="color:var(--bad)">over the ceiling</strong> by ${money(overage)}`}
+        </div>
+      </div>
+      <div class="bv-right">
+        <div class="bv-price-lbl">Max Approvable Purchase Price</div>
+        <div class="bv-price" style="color:${vClass==="approve"?"var(--good)":vClass==="conditional"?"var(--warn)":"var(--bad)"}">${money(bw.combined.maxPrice)}</div>
+        <div class="bv-price-sub">Derived from NOI, financing model, and bank thresholds</div>
+      </div>
+    </div>
+    <div class="sub-head">Max Approvable Price — by Underwriting Constraint</div>
+    <div class="bank-dark">
+      <div>
+        <div class="bd-label">DSCR ≥${bw.DR}x Constraint Only</div>
+        <div class="bd-val">${money(bw.dscrOnly.maxPrice)}</div>
+        <div class="bd-sub">
+          Max bank loan: ${money(bw.dscrOnly.bankLoan)}<br>
+          Equity required: ${money(bw.dscrOnly.equityNeeded)}<br>
+          DSCR at this price: ${bw.dscrOnly.dscr.toFixed(2)}x<br>
+          CoC unconstrained at: ${pct(bw.dscrOnly.coc)}
+        </div>
+      </div>
+      <div>
+        <div class="bd-label">CoC ≥${bw.CR}% Constraint Only</div>
+        <div class="bd-val">${money(bw.cocOnly.maxPrice)}</div>
+        <div class="bd-sub">
+          Max bank loan: ${money(bw.cocOnly.bankLoan)}<br>
+          Equity required: ${money(bw.cocOnly.equityNeeded)}<br>
+          CoC at this price: ${pct(bw.cocOnly.coc)}<br>
+          DSCR unconstrained at: ${bw.cocOnly.dscr.toFixed(2)}x
+        </div>
+      </div>
+      <div>
+        <div class="bd-label">★ Combined — Both Thresholds</div>
+        <div class="bd-val featured">${money(bw.combined.maxPrice)}</div>
+        <div class="bd-sub">
+          Bank loan: ${money(bw.ceilBankLoan)}<br>
+          Equity required: ${money(bw.ceilEquity)}<br>
+          LTV: ${pct(bw.ceilLtv,1)}<br>
+          Binding constraint: ${bw.dscrOnly.maxPrice<=bw.cocOnly.maxPrice?"DSCR":"CoC"}
+        </div>
+      </div>
+    </div>
+    <div class="sub-head">Underwriting Criteria Check — Actual Deal at ${money(r.price)}</div>
+    <div class="bank-crit-grid">
+      <div class="bank-crit ${dscrOk?"pass":"fail"}">
+        <div class="bc-lbl">DSCR</div>
+        <div class="bc-val ${dscrOk?"good":"bad"}">${r.dscr.toFixed(2)}x</div>
+        <div class="bc-req">Bank minimum ≥${bw.DR}x ${pbadge(dscrOk,false,"PASS","","FAIL")}</div>
+      </div>
+      <div class="bank-crit ${cocOk?"pass":"fail"}">
+        <div class="bc-lbl">Cash-on-Cash</div>
+        <div class="bc-val ${cocOk?"good":"bad"}">${pct(r.coc)}</div>
+        <div class="bc-req">Bank minimum ≥${bw.CR}% ${pbadge(cocOk,false,"PASS","","FAIL")}</div>
+      </div>
+      <div class="bank-crit ${ltvOk?"pass":"caution"}">
+        <div class="bc-lbl">LTV</div>
+        <div class="bc-val ${ltvOk?"good":"warn"}">${pct(r.ltv)}</div>
+        <div class="bc-req">Bank max ≤75% ${pbadge(ltvOk,!ltvOk,"PASS","CAUTION","CAUTION")}</div>
+      </div>
+      <div class="bank-crit ${dyOk?"pass":"caution"}">
+        <div class="bc-lbl">Debt Yield</div>
+        <div class="bc-val ${dyOk?"good":"warn"}">${pct(r.dy)}</div>
+        <div class="bc-req">Preferred ≥9% ${pbadge(dyOk,!dyOk,"PASS","REVIEW","REVIEW")}</div>
+      </div>
+      <div class="bank-crit ${priceOk?"pass":"fail"}">
+        <div class="bc-lbl">Price vs. Bank Ceiling</div>
+        <div class="bc-val ${priceOk?"good":"bad"}" style="font-size:16px">${money(r.price)}</div>
+        <div class="bc-req">Ceiling ${money(bw.combined.maxPrice)} ${pbadge(priceOk,false,"UNDER CEILING","","OVER CEILING")}</div>
+      </div>
+      <div class="bank-crit ${r.adjCap>=r.dy?"pass":"caution"}">
+        <div class="bc-lbl">Cap / Yield Spread</div>
+        <div class="bc-val">${pct(r.adjCap-r.dy,2)}</div>
+        <div class="bc-req">Adj cap ${pct(r.adjCap,1)} vs yield ${pct(r.dy,1)} ${pbadge(r.adjCap>=r.dy,false,"POSITIVE","","NEGATIVE")}</div>
+      </div>
+    </div>
+    <div class="sub-head">At-Ceiling Deal Metrics</div>
+    <div class="bank-derived">
+      <div class="bd-box"><div class="bd-box-lbl">Debt Yield at Ceiling</div><div class="bd-box-val">${pct(bw.ceilDY)}</div><div class="bd-box-sub">Adj. NOI / total debt</div></div>
+      <div class="bd-box"><div class="bd-box-lbl">Break-even Ratio</div><div class="bd-box-val">${pct(bw.ceilBE)}</div><div class="bd-box-sub">Debt svc / adj. NOI</div></div>
+      <div class="bd-box"><div class="bd-box-lbl">LTV at Ceiling</div><div class="bd-box-val">${pct(bw.ceilLtv,1)}</div><div class="bd-box-sub">Total debt / ceiling price</div></div>
+      <div class="bd-box"><div class="bd-box-lbl">Bank Loan at Ceiling</div><div class="bd-box-val" style="font-size:15px">${money(bw.ceilBankLoan)}</div><div class="bd-box-sub">Senior lien only</div></div>
+      <div class="bd-box"><div class="bd-box-lbl">Equity at Ceiling</div><div class="bd-box-val" style="font-size:15px">${money(bw.ceilEquity)}</div><div class="bd-box-sub">Cash required to close</div></div>
+      <div class="bd-box"><div class="bd-box-lbl">Adj. Cap at Ceiling</div><div class="bd-box-val">${pct(bw.ceilAdjCap)}</div><div class="bd-box-sub">Adj. NOI / ceiling price</div></div>
+      <div class="bd-box"><div class="bd-box-lbl">Cap Rate at Ceiling</div><div class="bd-box-val">${pct(bw.ceilCapRate)}</div><div class="bd-box-sub">Gross NOI / ceiling price</div></div>
+      <div class="bd-box"><div class="bd-box-lbl">Price Headroom</div><div class="bd-box-val" style="color:${r.price<=bw.combined.maxPrice?"var(--good)":"var(--bad)"};font-size:15px">${money(bw.combined.maxPrice-r.price)}</div><div class="bd-box-sub">${r.price<=bw.combined.maxPrice?"Under":"Over"} ceiling</div></div>
+    </div>
+    <div class="sub-head">Actual Deal vs. Bank Summary</div>
+    <div class="bank-summary-grid">
+      <div>
+        ${secTitle("Actual Deal")}
+        ${row("Purchase Price",money(r.price))}
+        ${row("DSCR",r.dscr.toFixed(2)+"x",dscrC(r.dscr))}
+        ${row("Cash-on-Cash",pct(r.coc),cocC(r.coc))}
+        ${row("LTV",pct(r.ltv),ltvC(r.ltv))}
+        ${row("Debt Yield",pct(r.dy),dyC(r.dy))}
+        ${row("Adj. Cap Rate",pct(r.adjCap))}
+        ${row("Annual Debt Service",money(r.ads))}
+        ${row("Equity Needed",money(r.eq))}
+      </div>
+      <div>
+        ${secTitle("At Bank Ceiling Price")}
+        ${row("Max Approvable Price",money(bw.combined.maxPrice))}
+        ${row("DSCR at Ceiling",bw.combined.dscr.toFixed(2)+"x",dscrC(bw.combined.dscr))}
+        ${row("CoC at Ceiling",pct(bw.combined.coc),cocC(bw.combined.coc))}
+        ${row("LTV at Ceiling",pct(bw.ceilLtv,1),ltvC(bw.ceilLtv))}
+        ${row("Debt Yield at Ceiling",pct(bw.ceilDY),dyC(bw.ceilDY))}
+        ${row("Adj. Cap Rate at Ceiling",pct(bw.ceilAdjCap))}
+        ${row("Annual Debt Svc at Ceiling",money(bw.combined.annualDebtService))}
+        ${row("Equity at Ceiling",money(bw.ceilEquity))}
+      </div>
+    </div>
+    <div class="sub-head">NOI Stress Test — Max Price at DSCR ≥${bw.DR}x &amp; CoC ≥${bw.CR}%</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:10px">
+      Shows how max approvable price, bank loan, and returns shift as NOI changes. Base case (0%) highlighted.
+    </div>
+    <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>NOI Stress</th><th>Stressed NOI</th><th>vs. Actual</th>
+          <th>Max Price</th><th>Max Bank Loan</th><th>Equity Req.</th><th>DSCR</th><th>CoC</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${bw.sensRows.map(sr=>`<tr class="${sr.delta===0?"sens-base":""}">
+          <td>${sr.delta>0?"+":""}${sr.delta}%${sr.delta===0?" (base)":""}</td>
+          <td>${money(sr.testNoi)}</td>
+          <td class="${sr.delta>0?"pos":"neg"}">${sr.delta===0?"—":(sr.delta>0?"+":"")+money(sr.testNoi-r.aNoi)}</td>
+          <td>${money(sr.maxPrice)}</td>
+          <td>${money(sr.maxLoan)}</td>
+          <td>${money(sr.eq)}</td>
+          <td class="${Number.isFinite(sr.dscr)&&sr.dscr>=bw.DR?"good":"bad"}">${Number.isFinite(sr.dscr)&&sr.dscr<999?sr.dscr.toFixed(2)+"x":"n/a"}</td>
+          <td class="${Number.isFinite(sr.coc)&&sr.coc>=bw.CR?"good":"bad"}">${Number.isFinite(sr.coc)&&sr.coc<999?pct(sr.coc):"n/a"}</td>
+        </tr>`).join("")}
+      </tbody>
+    </table>
+    </div>`}
+
+  return""}
+
+/* mobile collapsible input groups */
+document.querySelectorAll('.inp-group').forEach(g=>{
+  g.addEventListener('click',e=>{
+    if(window.innerWidth>680)return;
+    if(e.target.tagName==='INPUT')return;
+    g.classList.toggle('open');
+  });
+});
+/* open first group by default on mobile */
+function initMobileInputs(){
+  if(window.innerWidth<=680){
+    const groups=document.querySelectorAll('.inp-group');
+    groups.forEach(g=>g.classList.remove('open'));
+    if(groups[0])groups[0].classList.add('open');
+  }else{
+    document.querySelectorAll('.inp-group').forEach(g=>g.classList.remove('open'));
+  }
 }
-
-function row(n,v,cls=""){return`<div class="stat"><span class="stat-n">${n}</span><span class="stat-v${cls?" "+cls:""}">${v}</span></div>`}
-
+initMobileInputs();
+window.addEventListener('resize',initMobileInputs);
 function buildChart(){
   const r=lastResult;
-  const el=document.getElementById("cfChart");if(!el)return;
-  if(chartInst){chartInst.destroy();chartInst=null}
-  const labels=r.annualRows.map(x=>"Yr "+x.year);
-  const nois=r.annualRows.map(x=>Math.round(x.noi));
-  const debts=r.annualRows.map(x=>Math.round(x.debt));
-  const cfs=r.annualRows.map(x=>Math.round(x.cf));
-  chartInst=new Chart(el,{type:"bar",data:{labels,datasets:[{label:"Adj. NOI",data:nois,backgroundColor:"#378add",borderRadius:4},{label:"Debt svc",data:debts,backgroundColor:"#b4b2a9",borderRadius:4},{label:"Cash flow",data:cfs,type:"line",tension:0.3,fill:false,borderColor:"#639922",backgroundColor:"#639922",pointRadius:5,pointBackgroundColor:"#639922"}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>(v<0?"-":"")+new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",notation:"compact",maximumFractionDigits:0}).format(Math.abs(v))}}}}});
+  Chart.defaults.color="#60606e";
+  Chart.defaults.borderColor="#2a2a35";
+
+  const el=document.getElementById("cfChart");
+  if(el){
+    if(chartInst){chartInst.destroy();chartInst=null}
+    chartInst=new Chart(el,{type:"bar",data:{
+      labels:r.annualRows.map(x=>"Year "+x.year),
+      datasets:[
+        {label:"Adj. NOI",data:r.annualRows.map(x=>Math.round(x.noi)),backgroundColor:"rgba(80,160,240,.7)",borderRadius:4,borderSkipped:false},
+        {label:"Total Debt Svc",data:r.annualRows.map(x=>Math.round(x.debt)),backgroundColor:"rgba(96,96,110,.5)",borderRadius:4,borderSkipped:false},
+        {label:"Free Cash Flow",data:r.annualRows.map(x=>Math.round(x.cf)),type:"line",tension:0.4,fill:false,borderColor:"#5bf0a0",backgroundColor:"#5bf0a0",pointRadius:5,pointBackgroundColor:"#5bf0a0",borderWidth:2.5}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{backgroundColor:"#1a1a20",borderColor:"#2a2a35",borderWidth:1,titleColor:"#f0f0f4",bodyColor:"#a0a0b0"}},
+        scales:{
+          x:{grid:{color:"rgba(255,255,255,.04)"},ticks:{color:"#60606e"}},
+          y:{grid:{color:"rgba(255,255,255,.04)"},ticks:{color:"#60606e",callback:v=>(v<0?"-":"")+new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",notation:"compact",maximumFractionDigits:0}).format(Math.abs(v))}}}}})}
+
+  const el2=document.getElementById("balChart");
+  if(el2){
+    if(balChartInst){balChartInst.destroy();balChartInst=null}
+    balChartInst=new Chart(el2,{type:"line",data:{
+      labels:r.annualRows.map(x=>"Year "+x.year),
+      datasets:[
+        {label:"Bank Balance",data:r.annualRows.map(x=>Math.round(x.bankBal)),borderColor:"#a78bfa",backgroundColor:"rgba(167,139,250,.08)",fill:true,tension:0.4,pointRadius:4,pointBackgroundColor:"#a78bfa",borderWidth:2},
+        {label:"Seller Balance",data:r.annualRows.map(x=>Math.round(x.sellerBal)),borderColor:"#f0c050",backgroundColor:"rgba(240,192,80,.08)",fill:true,tension:0.4,pointRadius:4,pointBackgroundColor:"#f0c050",borderWidth:2}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{backgroundColor:"#1a1a20",borderColor:"#2a2a35",borderWidth:1,titleColor:"#f0f0f4",bodyColor:"#a0a0b0"}},
+        scales:{
+          x:{grid:{color:"rgba(255,255,255,.04)"},ticks:{color:"#60606e"}},
+          y:{grid:{color:"rgba(255,255,255,.04)"},ticks:{color:"#60606e",callback:v=>new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",notation:"compact",maximumFractionDigits:0}).format(v)}}}}})}
 }
 </script>
 </body>
